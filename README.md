@@ -27,7 +27,7 @@ O RestaurantCopilot transforma essas perguntas em consultas aos dados reais e de
 | Análise de avaliações | Classifica sentimento e temas de cada avaliação com saída JSON estruturada do LLM; resumo por período em `/api/reviews/insights` | ✅ Pronto |
 | RAG | Embeddings do cardápio e das avaliações no PostgreSQL com pgvector (índice HNSW) e busca semântica em `/api/search` | ✅ Pronto |
 | Agente com ferramentas | `POST /api/chat`: o LLM decide quando consultar vendas, avaliações, busca semântica ou relatórios, e responde citando as fontes | ✅ Pronto |
-| Texto para SQL | Perguntas analíticas viram SQL **somente leitura** e validado | Planejado (Fase 7) |
+| Texto para SQL | Ferramenta `query_database`: perguntas analíticas viram SQL validado por parser, executado com role **somente leitura** e timeout | ✅ Pronto |
 | Cache de respostas | Redis para reduzir latência e consumo da cota gratuita | Planejado (Fase 8) |
 | Cardápio | `GET /api/menu` com filtros por categoria e disponibilidade | ✅ Pronto |
 | Dados fictícios | 14 semanas de pedidos e avaliações de um restaurante fictício, carregados automaticamente | ✅ Pronto |
@@ -70,6 +70,7 @@ Essa regra não é só convenção: **testes de arquitetura** (`NetArchTest`) qu
 │   ├── adr/                        # Architecture Decision Records
 │   └── diagrams/                   # diagramas Mermaid
 ├── seed/                           # gerador e dados fictícios (JSON)
+├── docker/postgres/initdb/         # cria o login somente leitura do texto para SQL
 ├── docker-compose.yml              # API + PostgreSQL (pgvector) + Redis
 └── .github/workflows/ci.yml
 ```
@@ -102,7 +103,7 @@ curl http://localhost:8080/health
 curl http://localhost:8080/api/menu
 ```
 
-Na primeira subida, a API aplica as migrations e carrega os dados fictícios de [`seed/`](seed/) (só em banco vazio). Para recriar do zero: `docker compose down -v`.
+Na primeira subida, o PostgreSQL cria o login somente leitura (`docker/postgres/initdb`), e a API aplica as migrations e carrega os dados fictícios de [`seed/`](seed/) (só em banco vazio). Para recriar do zero: `docker compose down -v`.
 
 As funcionalidades de IA precisam de uma chave do Gemini, gerada gratuitamente no [Google AI Studio](https://aistudio.google.com/apikey). No Docker, coloque-a em `GEMINI_API_KEY` no `.env`. Sem a chave a API sobe normalmente e o `/health` mostra o Gemini como `Degraded`.
 
@@ -264,7 +265,7 @@ Os testes rodam na **Microsoft.Testing.Platform** com xUnit v3. Os testes de int
 |---|---|
 | `RestaurantCopilot.Domain.Tests` | Invariantes das entidades e value objects (`Money`, `Rating`, `Order`, `Review`...) |
 | `RestaurantCopilot.Application.Tests` | Casos de uso e saída estruturada do LLM com dublês (NSubstitute) |
-| `RestaurantCopilot.Infrastructure.Tests` | Repositórios, mapeamentos do EF Core, seed e busca vetorial (pgvector) contra PostgreSQL real; cliente Gemini (formato das requisições, function calling, erros, retry de `429`) com um `HttpMessageHandler` falso, sem rede |
+| `RestaurantCopilot.Infrastructure.Tests` | Repositórios, mapeamentos do EF Core, seed e busca vetorial (pgvector) contra PostgreSQL real; guard de SQL (dezenas de tentativas de escrita, injeção e acesso a catálogos) e executor somente leitura, que bloqueia escrita e consultas longas mesmo sem o guard; cliente Gemini (formato das requisições, function calling, erros, retry de `429`) com um `HttpMessageHandler` falso, sem rede |
 | `RestaurantCopilot.Api.Tests` | Regras de dependência entre camadas e endpoints de ponta a ponta (ex.: `/api/menu`, `/health` com Redis fora do ar, reindex + busca semântica com um embedding determinístico no lugar do Gemini) |
 
 O [workflow de CI](.github/workflows/ci.yml) roda em todo push na `main` e em pull requests: restore, `dotnet format --verify-no-changes`, build em Release com warnings tratados como erros, testes e build da imagem Docker.
@@ -286,6 +287,7 @@ Planejado (Fase 9): um conjunto de perguntas com respostas esperadas sobre os da
 - **RAG sem serviço extra:** vetores no próprio PostgreSQL (pgvector + HNSW), reindex atômico e checagem de dimensão antes de gastar cota ([ADR 0006](docs/adr/0006-rag-with-pgvector.md)).
 - **Agente limitado e tolerante a erros:** no máximo 6 turnos com ferramentas (depois, uma resposta forçada sem ferramentas), timeout total, e erros de ferramenta devolvidos ao modelo para que ele se corrija ([ADR 0007](docs/adr/0007-agent-function-calling.md)).
 - **Números vêm de ferramentas, não do modelo:** o prompt proíbe inventar dados, e cada resposta traz as ferramentas e documentos usados.
+- **Texto para SQL em três camadas:** guard com parser de PostgreSQL (um único `SELECT`, sem comentários, sem catálogos), role do banco que só lê as tabelas de negócio e transação `READ ONLY` com timeout e limite de linhas. Cada camada sozinha já impede escrita ([ADR 0008](docs/adr/0008-text-to-sql-defense-in-depth.md)).
 - **Enums gravados como texto** no banco (`'Delivery'` em vez de `0`): consultas, inclusive as geradas pelo LLM, ficam legíveis sem tabela de-para.
 
 As decisões completas estão nos [ADRs](docs/adr/).
@@ -298,7 +300,7 @@ As decisões completas estão nos [ADRs](docs/adr/).
 4. ~~Análise de avaliações e endpoint de insights~~ ✅
 5. ~~RAG com pgvector~~ ✅
 6. ~~Agente com function calling e `/api/chat`~~ ✅
-7. Texto para SQL com validação e usuário somente leitura
+7. ~~Texto para SQL com validação e usuário somente leitura~~ ✅
 8. Cache com Redis
 9. Avaliação do agente
 10. Documentação final e diagramas

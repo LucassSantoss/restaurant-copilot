@@ -11,6 +11,7 @@ Cada decisão técnica relevante do projeto é registrada aqui como um ADR curto
 | [0005](0005-review-classification.md) | Classificação de avaliações com saída estruturada, em lote e tolerante a falhas | Aceito |
 | [0006](0006-rag-with-pgvector.md) | RAG com pgvector no mesmo PostgreSQL | Aceito |
 | [0007](0007-agent-function-calling.md) | Agente com function calling, ferramentas tipadas e loop limitado | Aceito |
+| [0008](0008-text-to-sql-defense-in-depth.md) | Texto para SQL com defesa em profundidade | Aceito |
 
 ## Modelo
 
