@@ -4,16 +4,16 @@ namespace RestaurantCopilot.Application.Abstractions.Ai;
 
 public static class LlmErrors
 {
-    public static readonly Error NotConfigured = Error.Failure(
+    public static readonly Error NotConfigured = Error.Unavailable(
         "Llm.NotConfigured", "The LLM provider is not configured (missing API key).");
 
-    public static readonly Error Unauthorized = Error.Failure(
+    public static readonly Error Unauthorized = Error.Unavailable(
         "Llm.Unauthorized", "The LLM provider rejected the configured API key.");
 
-    public static readonly Error RateLimited = Error.Failure(
+    public static readonly Error RateLimited = Error.Unavailable(
         "Llm.RateLimited", "The LLM provider rate limit was reached. Try again in a few moments.");
 
-    public static readonly Error Unavailable = Error.Failure(
+    public static readonly Error Unavailable = Error.Unavailable(
         "Llm.Unavailable", "The LLM provider is unavailable or timed out.");
 
     public static readonly Error Blocked = Error.Failure(

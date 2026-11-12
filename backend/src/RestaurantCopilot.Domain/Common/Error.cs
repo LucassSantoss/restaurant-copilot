@@ -11,5 +11,7 @@ public record Error(string Code, string Message, ErrorType Type)
 
     public static Error Conflict(string code, string message) => new(code, message, ErrorType.Conflict);
 
+    public static Error Unavailable(string code, string message) => new(code, message, ErrorType.Unavailable);
+
     public static Error Failure(string code, string message) => new(code, message, ErrorType.Failure);
 }

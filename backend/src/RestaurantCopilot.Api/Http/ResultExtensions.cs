@@ -19,6 +19,7 @@ internal static class ResultExtensions
                 ErrorType.Validation => StatusCodes.Status400BadRequest,
                 ErrorType.NotFound => StatusCodes.Status404NotFound,
                 ErrorType.Conflict => StatusCodes.Status409Conflict,
+                ErrorType.Unavailable => StatusCodes.Status503ServiceUnavailable,
                 _ => StatusCodes.Status500InternalServerError,
             },
             title: error.Code,

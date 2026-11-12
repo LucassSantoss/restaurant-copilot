@@ -6,4 +6,7 @@ public enum ErrorType
     Validation,
     NotFound,
     Conflict,
+
+    /// <summary>A dependency (e.g. the LLM provider) is down, rate limited or not configured.</summary>
+    Unavailable,
 }
