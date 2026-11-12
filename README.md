@@ -28,7 +28,7 @@ O RestaurantCopilot transforma essas perguntas em consultas aos dados reais e de
 | RAG | Embeddings do cardápio e das avaliações no PostgreSQL com pgvector (índice HNSW) e busca semântica em `/api/search` | ✅ Pronto |
 | Agente com ferramentas | `POST /api/chat`: o LLM decide quando consultar vendas, avaliações, busca semântica ou relatórios, e responde citando as fontes | ✅ Pronto |
 | Texto para SQL | Ferramenta `query_database`: perguntas analíticas viram SQL validado por parser, executado com role **somente leitura** e timeout | ✅ Pronto |
-| Cache de respostas | Redis para reduzir latência e consumo da cota gratuita | Planejado (Fase 8) |
+| Cache de respostas | Respostas do agente no Redis por pergunta normalizada + dia, invalidadas quando os dados mudam | ✅ Pronto |
 | Cardápio | `GET /api/menu` com filtros por categoria e disponibilidade | ✅ Pronto |
 | Dados fictícios | 14 semanas de pedidos e avaliações de um restaurante fictício, carregados automaticamente | ✅ Pronto |
 | Integração com LLM | Gemini atrás de `ILlmClient`/`IEmbeddingService`, com retry para `429` e timeouts | ✅ Pronto |
@@ -86,7 +86,7 @@ Essa regra não é só convenção: **testes de arquitetura** (`NetArchTest`) qu
 | Casos de uso | Handlers próprios (CQRS leve) + Scrutor | Sem dependência com licença comercial ([ADR 0002](docs/adr/0002-own-cqrs-handlers.md)) |
 | IA | Google Gemini (plano gratuito), REST API | Texto, JSON estruturado, function calling e embeddings sem custo ([ADR 0004](docs/adr/0004-gemini-behind-llm-port.md)) |
 | Resiliência | Microsoft.Extensions.Http.Resilience (Polly) | Retry com backoff para o limite do plano gratuito, timeouts e circuit breaker |
-| Cache | Redis 8 | Cache de respostas do agente |
+| Cache | Redis 8 | Cache de respostas do agente ([ADR 0009](docs/adr/0009-chat-answer-cache.md)) |
 | Logs | Serilog | Logs estruturados configuráveis por `appsettings` |
 | Documentação da API | OpenAPI + Scalar | Documento OpenAPI nativo do .NET com uma UI moderna |
 | Testes | xUnit v3, Shouldly, NSubstitute, Testcontainers | Testes de integração contra PostgreSQL e Redis reais |
@@ -141,7 +141,8 @@ Content-Type: application/json
     { "tool": "search_sales", "arguments": { "period_start": "2026-11-02", "period_end": "2026-11-08" }, "succeeded": true, "error": null },
     { "tool": "search_sales", "arguments": { "period_start": "2026-10-26", "period_end": "2026-11-01" }, "succeeded": true, "error": null }
   ],
-  "usage": { "inputTokens": 4210, "outputTokens": 180 }
+  "usage": { "inputTokens": 4210, "outputTokens": 180 },
+  "cached": false
 }
 ```
 
@@ -288,6 +289,7 @@ Planejado (Fase 9): um conjunto de perguntas com respostas esperadas sobre os da
 - **Agente limitado e tolerante a erros:** no máximo 6 turnos com ferramentas (depois, uma resposta forçada sem ferramentas), timeout total, e erros de ferramenta devolvidos ao modelo para que ele se corrija ([ADR 0007](docs/adr/0007-agent-function-calling.md)).
 - **Números vêm de ferramentas, não do modelo:** o prompt proíbe inventar dados, e cada resposta traz as ferramentas e documentos usados.
 - **Texto para SQL em três camadas:** guard com parser de PostgreSQL (um único `SELECT`, sem comentários, sem catálogos), role do banco que só lê as tabelas de negócio e transação `READ ONLY` com timeout e limite de linhas. Cada camada sozinha já impede escrita ([ADR 0008](docs/adr/0008-text-to-sql-defense-in-depth.md)).
+- **Cache que não serve resposta velha:** a chave inclui a data de hoje e uma versão dos dados, trocada a cada nova avaliação, classificação ou reindex; se o Redis cair, o cache vira *miss* em vez de erro ([ADR 0009](docs/adr/0009-chat-answer-cache.md)).
 - **Enums gravados como texto** no banco (`'Delivery'` em vez de `0`): consultas, inclusive as geradas pelo LLM, ficam legíveis sem tabela de-para.
 
 As decisões completas estão nos [ADRs](docs/adr/).
@@ -301,7 +303,7 @@ As decisões completas estão nos [ADRs](docs/adr/).
 5. ~~RAG com pgvector~~ ✅
 6. ~~Agente com function calling e `/api/chat`~~ ✅
 7. ~~Texto para SQL com validação e usuário somente leitura~~ ✅
-8. Cache com Redis
+8. ~~Cache com Redis~~ ✅
 9. Avaliação do agente
 10. Documentação final e diagramas
 11. Frontend (React + TypeScript + Vite)
