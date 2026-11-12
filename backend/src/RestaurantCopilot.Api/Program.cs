@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using RestaurantCopilot.Api.Endpoints;
 using RestaurantCopilot.Api.HealthChecks;
 using RestaurantCopilot.Application;
+using RestaurantCopilot.Application.Agent;
 using RestaurantCopilot.Infrastructure;
 using RestaurantCopilot.Infrastructure.Persistence;
 using Scalar.AspNetCore;
@@ -29,6 +30,7 @@ try
         options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
     builder.Services.AddApplication();
+    builder.Services.Configure<AgentOptions>(builder.Configuration.GetSection(AgentOptions.SectionName));
     builder.Services.AddInfrastructure(builder.Configuration);
 
     var app = builder.Build();
@@ -51,6 +53,7 @@ try
         app.MapScalarApiReference();
     }
 
+    app.MapChatEndpoints();
     app.MapMenuEndpoints();
     app.MapReviewEndpoints();
     app.MapIngestionEndpoints();
