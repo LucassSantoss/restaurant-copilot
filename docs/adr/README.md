@@ -9,6 +9,7 @@ Cada decisão técnica relevante do projeto é registrada aqui como um ADR curto
 | [0003](0003-deterministic-seed-data.md) | Dados fictícios gerados de forma determinística | Aceito |
 | [0004](0004-gemini-behind-llm-port.md) | Google Gemini atrás de um port próprio, com cliente HTTP e resiliência | Aceito |
 | [0005](0005-review-classification.md) | Classificação de avaliações com saída estruturada, em lote e tolerante a falhas | Aceito |
+| [0006](0006-rag-with-pgvector.md) | RAG com pgvector no mesmo PostgreSQL | Aceito |
 
 ## Modelo
 

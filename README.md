@@ -25,7 +25,7 @@ O RestaurantCopilot transforma essas perguntas em consultas aos dados reais e de
 | Funcionalidade | Descrição | Status |
 |---|---|---|
 | Análise de avaliações | Classifica sentimento e temas de cada avaliação com saída JSON estruturada do LLM; resumo por período em `/api/reviews/insights` | ✅ Pronto |
-| RAG | Embeddings do cardápio e das avaliações no PostgreSQL com pgvector | Planejado (Fase 5) |
+| RAG | Embeddings do cardápio e das avaliações no PostgreSQL com pgvector (índice HNSW) e busca semântica em `/api/search` | ✅ Pronto |
 | Agente com ferramentas | O LLM decide quando consultar vendas, avaliações ou fazer busca semântica | Planejado (Fase 6) |
 | Texto para SQL | Perguntas analíticas viram SQL **somente leitura** e validado | Planejado (Fase 7) |
 | Cache de respostas | Redis para reduzir latência e consumo da cota gratuita | Planejado (Fase 8) |
@@ -80,7 +80,7 @@ Essa regra não é só convenção: **testes de arquitetura** (`NetArchTest`) qu
 |---|---|---|
 | API | .NET 10 (LTS), ASP.NET Core | Suporte de longo prazo, performance e tipagem forte |
 | Arquitetura | Clean Architecture | Isola regras de negócio de provedores que mudam ([ADR 0001](docs/adr/0001-clean-architecture.md)) |
-| Banco | PostgreSQL 18 + pgvector | Dados relacionais e vetoriais no mesmo banco, sem um serviço extra |
+| Banco | PostgreSQL 18 + pgvector | Dados relacionais e vetoriais no mesmo banco, sem um serviço extra ([ADR 0006](docs/adr/0006-rag-with-pgvector.md)) |
 | ORM | EF Core 10 + Npgsql, convenção snake_case | Migrations versionadas; nomes no padrão do PostgreSQL, legíveis também para o SQL gerado pelo LLM |
 | Casos de uso | Handlers próprios (CQRS leve) + Scrutor | Sem dependência com licença comercial ([ADR 0002](docs/adr/0002-own-cqrs-handlers.md)) |
 | IA | Google Gemini (plano gratuito), REST API | Texto, JSON estruturado, function calling e embeddings sem custo ([ADR 0004](docs/adr/0004-gemini-behind-llm-port.md)) |
@@ -187,6 +187,29 @@ GET /api/reviews/insights?from=2026-10-01&to=2026-10-31
 > Total e média vêm do seed; sentimento, temas e pratos dependem da classificação feita pelo modelo.
 
 ```http
+POST /api/ingestion/reindex
+```
+
+```json
+{ "menuItems": 24, "reviews": 215 }
+```
+
+```http
+GET /api/search?query=problemas com a embalagem&source=Review&limit=2
+```
+
+```json
+[
+  {
+    "source": "Review",
+    "sourceId": "019a7c3e-...",
+    "content": "Avaliação de cliente, nota 1/5, em quarta-feira, 28/10/2026, sobre o pedido: \"Embalagem frágil, a tampa abriu no caminho e sujou tudo.\"",
+    "similarity": 0.8123
+  }
+]
+```
+
+```http
 GET /health
 ```
 
@@ -217,8 +240,8 @@ Os testes rodam na **Microsoft.Testing.Platform** com xUnit v3. Os testes de int
 |---|---|
 | `RestaurantCopilot.Domain.Tests` | Invariantes das entidades e value objects (`Money`, `Rating`, `Order`, `Review`...) |
 | `RestaurantCopilot.Application.Tests` | Casos de uso e saída estruturada do LLM com dublês (NSubstitute) |
-| `RestaurantCopilot.Infrastructure.Tests` | Repositórios, mapeamentos do EF Core e seed contra PostgreSQL real; cliente Gemini (formato das requisições, function calling, erros, retry de `429`) com um `HttpMessageHandler` falso, sem rede |
-| `RestaurantCopilot.Api.Tests` | Regras de dependência entre camadas e endpoints de ponta a ponta (ex.: `/api/menu`, `/health` com Redis fora do ar) |
+| `RestaurantCopilot.Infrastructure.Tests` | Repositórios, mapeamentos do EF Core, seed e busca vetorial (pgvector) contra PostgreSQL real; cliente Gemini (formato das requisições, function calling, erros, retry de `429`) com um `HttpMessageHandler` falso, sem rede |
+| `RestaurantCopilot.Api.Tests` | Regras de dependência entre camadas e endpoints de ponta a ponta (ex.: `/api/menu`, `/health` com Redis fora do ar, reindex + busca semântica com um embedding determinístico no lugar do Gemini) |
 
 O [workflow de CI](.github/workflows/ci.yml) roda em todo push na `main` e em pull requests: restore, `dotnet format --verify-no-changes`, build em Release com warnings tratados como erros, testes e build da imagem Docker.
 
@@ -236,6 +259,7 @@ Planejado (Fase 9): um conjunto de perguntas com respostas esperadas sobre os da
 - **Limites do plano gratuito do Gemini:** chamadas com retry exponencial e jitter (respeitando `Retry-After`), timeout por tentativa e total, e erros explícitos (`Llm.RateLimited`) quando as tentativas acabam. Os testes nunca chamam a API real.
 - **Classificação que não perde dados:** se o LLM falhar ao cadastrar uma avaliação, ela é salva como pendente e classificada depois, em lote ([ADR 0005](docs/adr/0005-review-classification.md)).
 - **Prompt injection em avaliações:** o texto do cliente vai como dado JSON e o classificador não tem ferramentas; no pior caso, uma avaliação é mal classificada.
+- **RAG sem serviço extra:** vetores no próprio PostgreSQL (pgvector + HNSW), reindex atômico e checagem de dimensão antes de gastar cota ([ADR 0006](docs/adr/0006-rag-with-pgvector.md)).
 - **Enums gravados como texto** no banco (`'Delivery'` em vez de `0`): consultas, inclusive as geradas pelo LLM, ficam legíveis sem tabela de-para.
 
 As decisões completas estão nos [ADRs](docs/adr/).
@@ -246,7 +270,7 @@ As decisões completas estão nos [ADRs](docs/adr/).
 2. ~~Domínio e dados: entidades, EF Core, migrations e seed fictício~~ ✅
 3. ~~Integração com o Gemini atrás de `ILlmClient`, com resiliência~~ ✅
 4. ~~Análise de avaliações e endpoint de insights~~ ✅
-5. RAG com pgvector
+5. ~~RAG com pgvector~~ ✅
 6. Agente com function calling e `/api/chat`
 7. Texto para SQL com validação e usuário somente leitura
 8. Cache com Redis
