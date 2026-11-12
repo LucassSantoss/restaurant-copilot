@@ -1,6 +1,21 @@
 name: restaurant-copilot
 
 services:
+  api:
+    build:
+      context: ./backend
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Postgres: Host=postgres;Port=5432;Database=${POSTGRES_DB:-restaurant_copilot};Username=${POSTGRES_USER:-copilot};Password=${POSTGRES_PASSWORD:-copilot}
+      ConnectionStrings__Redis: redis:6379
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   postgres:
     # Official PostgreSQL image with the pgvector extension pre-installed.
     image: pgvector/pgvector:pg18

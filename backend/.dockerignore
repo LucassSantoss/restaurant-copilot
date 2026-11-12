@@ -1,0 +1,8 @@
+**/bin/
+**/obj/
+**/TestResults/
+tests/
+.vs/
+.vscode/
+.idea/
+*.user
