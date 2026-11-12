@@ -1,0 +1,1394 @@
+[
+  {
+    "orderNumber": 1003,
+    "rating": 3,
+    "comment": "Bom, mas já foi melhor.",
+    "createdAt": "2026-08-03T17:15:00-03:00"
+  },
+  {
+    "orderNumber": 1006,
+    "menuItem": "parmegiana",
+    "rating": 5,
+    "comment": "Que delícia de Filé à Parmegiana, no ponto certinho! Vou pedir de novo!",
+    "createdAt": "2026-08-04T07:53:00-03:00"
+  },
+  {
+    "orderNumber": 1010,
+    "menuItem": "risoto-camarao",
+    "rating": 4,
+    "comment": "Entrega antes do previsto e Risoto de Camarão chegou em ótimo estado.",
+    "createdAt": "2026-08-05T15:53:00-03:00"
+  },
+  {
+    "orderNumber": 1047,
+    "menuItem": "pizza-margherita",
+    "rating": 1,
+    "comment": "Entrega muito lenta, o pedido (Pizza Margherita) chegou frio.",
+    "createdAt": "2026-08-08T03:24:00-03:00"
+  },
+  {
+    "orderNumber": 1051,
+    "menuItem": "pizza-quatro-queijos",
+    "rating": 5,
+    "comment": "Que delícia de Pizza Quatro Queijos, no ponto certinho!",
+    "createdAt": "2026-08-08T07:21:00-03:00"
+  },
+  {
+    "orderNumber": 1061,
+    "rating": 3,
+    "comment": "Comida ok, nada de especial.",
+    "createdAt": "2026-08-09T00:04:00-03:00"
+  },
+  {
+    "orderNumber": 1080,
+    "menuItem": "pizza-quatro-queijos",
+    "rating": 5,
+    "comment": "Pizza Quatro Queijos estava incrível, sabor de cantina de verdade.",
+    "createdAt": "2026-08-09T05:24:00-03:00"
+  },
+  {
+    "orderNumber": 1082,
+    "rating": 4,
+    "comment": "Embalagem caprichada, chegou tudo intacto.",
+    "createdAt": "2026-08-09T16:23:00-03:00"
+  },
+  {
+    "orderNumber": 1087,
+    "menuItem": "spaghetti-carbonara",
+    "rating": 5,
+    "comment": "Spaghetti à Carbonara estava incrível, sabor de cantina de verdade.",
+    "createdAt": "2026-08-10T01:01:00-03:00"
+  },
+  {
+    "orderNumber": 1091,
+    "menuItem": "parmegiana",
+    "rating": 3,
+    "comment": "Chegou no horário previsto. Filé à Parmegiana estava ok.",
+    "createdAt": "2026-08-10T16:33:00-03:00"
+  },
+  {
+    "orderNumber": 1097,
+    "menuItem": "risoto-camarao",
+    "rating": 1,
+    "comment": "Pelo que custa Risoto de Camarão, esperava bem mais na porção.",
+    "createdAt": "2026-08-10T00:26:00-03:00"
+  },
+  {
+    "orderNumber": 1099,
+    "rating": 5,
+    "comment": "Atendimento muito educado, até mandaram um bilhetinho.",
+    "createdAt": "2026-08-10T03:38:00-03:00"
+  },
+  {
+    "orderNumber": 1118,
+    "menuItem": "pizza-margherita",
+    "rating": 5,
+    "comment": "Entrega antes do previsto e Pizza Margherita chegou em ótimo estado.",
+    "createdAt": "2026-08-12T15:05:00-03:00"
+  },
+  {
+    "orderNumber": 1121,
+    "rating": 2,
+    "comment": "O pedido atrasou 51 minutos e ninguém avisou nada.",
+    "createdAt": "2026-08-13T05:29:00-03:00"
+  },
+  {
+    "orderNumber": 1137,
+    "menuItem": "pizza-pepperoni",
+    "rating": 5,
+    "comment": "Melhor Pizza Pepperoni que já pedi por delivery. Virei cliente.",
+    "createdAt": "2026-08-14T07:47:00-03:00"
+  },
+  {
+    "orderNumber": 1140,
+    "menuItem": "parmegiana",
+    "rating": 5,
+    "comment": "Melhor Filé à Parmegiana que já pedi por delivery.",
+    "createdAt": "2026-08-14T01:28:00-03:00"
+  },
+  {
+    "orderNumber": 1145,
+    "rating": 4,
+    "comment": "Chegou rapidinho e bem quentinho! Recomendo.",
+    "createdAt": "2026-08-15T00:17:00-03:00"
+  },
+  {
+    "orderNumber": 1152,
+    "menuItem": "frango-limao",
+    "rating": 2,
+    "comment": "Pedi Frango ao Limão e veio cru no meio, bem decepcionante.",
+    "createdAt": "2026-08-14T20:36:00-03:00"
+  },
+  {
+    "orderNumber": 1161,
+    "menuItem": "pizza-pepperoni",
+    "rating": 1,
+    "comment": "Pelo que custa Pizza Pepperoni, esperava bem mais na porção. Decepcionante.",
+    "createdAt": "2026-08-15T08:14:00-03:00"
+  },
+  {
+    "orderNumber": 1171,
+    "menuItem": "pizza-margherita",
+    "rating": 4,
+    "comment": "Embalagem impecável para Pizza Margherita, sem vazar nada.",
+    "createdAt": "2026-08-16T01:58:00-03:00"
+  },
+  {
+    "orderNumber": 1175,
+    "menuItem": "risoto-camarao",
+    "rating": 5,
+    "comment": "Entrega antes do previsto e Risoto de Camarão chegou em ótimo estado.",
+    "createdAt": "2026-08-16T08:04:00-03:00"
+  },
+  {
+    "orderNumber": 1176,
+    "rating": 2,
+    "comment": "Pedi para trocar um item pelo chat e ninguém respondeu.",
+    "createdAt": "2026-08-16T09:59:00-03:00"
+  },
+  {
+    "orderNumber": 1177,
+    "rating": 4,
+    "comment": "Comida deliciosa e bem servida. Recomendo.",
+    "createdAt": "2026-08-16T00:01:00-03:00"
+  },
+  {
+    "orderNumber": 1187,
+    "rating": 5,
+    "comment": "Comida deliciosa e bem servida. Virei cliente.",
+    "createdAt": "2026-08-17T14:50:00-03:00"
+  },
+  {
+    "orderNumber": 1189,
+    "menuItem": "pizza-quatro-queijos",
+    "rating": 5,
+    "comment": "Pizza Quatro Queijos estava incrível, sabor de cantina de verdade.",
+    "createdAt": "2026-08-17T07:06:00-03:00"
+  },
+  {
+    "orderNumber": 1191,
+    "rating": 5,
+    "comment": "Equipe atenciosa, resolveram meu pedido especial sem problema.",
+    "createdAt": "2026-08-17T12:45:00-03:00"
+  },
+  {
+    "orderNumber": 1204,
+    "rating": 2,
+    "comment": "Esperei quase uma hora e meia pelo pedido numa sexta à noite.",
+    "createdAt": "2026-08-16T22:51:00-03:00"
+  },
+  {
+    "orderNumber": 1208,
+    "menuItem": "spaghetti-carbonara",
+    "rating": 1,
+    "comment": "Achei Spaghetti à Carbonara sem graça, esperava mais sabor.",
+    "createdAt": "2026-08-18T14:19:00-03:00"
+  },
+  {
+    "orderNumber": 1209,
+    "rating": 4,
+    "comment": "Sabor incrível, tudo muito bem temperado. Vou pedir de novo!",
+    "createdAt": "2026-08-18T01:43:00-03:00"
+  },
+  {
+    "orderNumber": 1220,
+    "rating": 5,
+    "comment": "Sabor incrível, tudo muito bem temperado.",
+    "createdAt": "2026-08-19T02:17:00-03:00"
+  },
+  {
+    "orderNumber": 1221,
+    "rating": 3,
+    "comment": "Bom, mas já foi melhor.",
+    "createdAt": "2026-08-19T09:50:00-03:00"
+  },
+  {
+    "orderNumber": 1224,
+    "rating": 1,
+    "comment": "O pedido atrasou 61 minutos e ninguém avisou nada.",
+    "createdAt": "2026-08-19T13:32:00-03:00"
+  },
+  {
+    "orderNumber": 1233,
+    "rating": 5,
+    "comment": "Embalagem caprichada, chegou tudo intacto.",
+    "createdAt": "2026-08-20T00:55:00-03:00"
+  },
+  {
+    "orderNumber": 1239,
+    "rating": 4,
+    "comment": "Embalagem caprichada, chegou tudo intacto.",
+    "createdAt": "2026-08-21T10:46:00-03:00"
+  },
+  {
+    "orderNumber": 1241,
+    "rating": 5,
+    "comment": "Comida deliciosa e bem servida. Recomendo.",
+    "createdAt": "2026-08-21T02:22:00-03:00"
+  },
+  {
+    "orderNumber": 1253,
+    "rating": 3,
+    "comment": "Embalagem simples, mas cumpriu o papel.",
+    "createdAt": "2026-08-22T07:42:00-03:00"
+  },
+  {
+    "orderNumber": 1265,
+    "rating": 5,
+    "comment": "Atendimento muito educado, até mandaram um bilhetinho. Recomendo.",
+    "createdAt": "2026-08-21T19:51:00-03:00"
+  },
+  {
+    "orderNumber": 1272,
+    "rating": 2,
+    "comment": "O pedido atrasou 61 minutos e ninguém avisou nada.",
+    "createdAt": "2026-08-23T17:09:00-03:00"
+  },
+  {
+    "orderNumber": 1276,
+    "menuItem": "parmegiana",
+    "rating": 1,
+    "comment": "Pedi Filé à Parmegiana e veio cru no meio, bem decepcionante.",
+    "createdAt": "2026-08-22T22:39:00-03:00"
+  },
+  {
+    "orderNumber": 1280,
+    "menuItem": "spaghetti-carbonara",
+    "rating": 3,
+    "comment": "Spaghetti à Carbonara estava razoável, já comi melhores.",
+    "createdAt": "2026-08-22T23:29:00-03:00"
+  },
+  {
+    "orderNumber": 1282,
+    "rating": 5,
+    "comment": "Sabor incrível, tudo muito bem temperado.",
+    "createdAt": "2026-08-23T06:41:00-03:00"
+  },
+  {
+    "orderNumber": 1283,
+    "rating": 2,
+    "comment": "Esperei quase uma hora e meia pelo pedido numa sexta à noite. Esperava mais.",
+    "createdAt": "2026-08-23T06:12:00-03:00"
+  },
+  {
+    "orderNumber": 1288,
+    "menuItem": "pizza-calabresa",
+    "rating": 5,
+    "comment": "Pizza Calabresa estava incrível, sabor de cantina de verdade.",
+    "createdAt": "2026-08-23T03:59:00-03:00"
+  },
+  {
+    "orderNumber": 1297,
+    "menuItem": "fettuccine-alfredo",
+    "rating": 5,
+    "comment": "Preço justo pela qualidade de Fettuccine Alfredo.",
+    "createdAt": "2026-08-24T09:24:00-03:00"
+  },
+  {
+    "orderNumber": 1306,
+    "menuItem": "pizza-calabresa",
+    "rating": 5,
+    "comment": "Que delícia de Pizza Calabresa, no ponto certinho!",
+    "createdAt": "2026-08-24T06:46:00-03:00"
+  },
+  {
+    "orderNumber": 1309,
+    "rating": 3,
+    "comment": "Preço justo, nada além do esperado.",
+    "createdAt": "2026-08-24T07:41:00-03:00"
+  },
+  {
+    "orderNumber": 1310,
+    "rating": 1,
+    "comment": "Esperei quase uma hora e meia pelo pedido numa sexta à noite.",
+    "createdAt": "2026-08-24T00:03:00-03:00"
+  },
+  {
+    "orderNumber": 1319,
+    "rating": 5,
+    "comment": "Comida deliciosa e bem servida.",
+    "createdAt": "2026-08-25T06:33:00-03:00"
+  },
+  {
+    "orderNumber": 1325,
+    "menuItem": "lasanha-bolonhesa",
+    "rating": 4,
+    "comment": "Lasanha à Bolonhesa estava incrível, sabor de cantina de verdade.",
+    "createdAt": "2026-08-25T14:41:00-03:00"
+  },
+  {
+    "orderNumber": 1330,
+    "menuItem": "risoto-camarao",
+    "rating": 1,
+    "comment": "Preço de Risoto de Camarão alto demais para o tamanho da porção.",
+    "createdAt": "2026-08-27T05:37:00-03:00"
+  },
+  {
+    "orderNumber": 1332,
+    "menuItem": "risoto-camarao",
+    "rating": 5,
+    "comment": "Risoto de Camarão estava incrível, sabor de cantina de verdade. Virei cliente.",
+    "createdAt": "2026-08-27T02:20:00-03:00"
+  },
+  {
+    "orderNumber": 1338,
+    "menuItem": "lasanha-bolonhesa",
+    "rating": 5,
+    "comment": "Entrega antes do previsto e Lasanha à Bolonhesa chegou em ótimo estado.",
+    "createdAt": "2026-08-28T00:57:00-03:00"
+  },
+  {
+    "orderNumber": 1347,
+    "menuItem": "pizza-calabresa",
+    "rating": 5,
+    "comment": "Melhor Pizza Calabresa que já pedi por delivery. Vou pedir de novo!",
+    "createdAt": "2026-08-28T07:30:00-03:00"
+  },
+  {
+    "orderNumber": 1348,
+    "menuItem": "pizza-quatro-queijos",
+    "rating": 5,
+    "comment": "Entrega antes do previsto e Pizza Quatro Queijos chegou em ótimo estado.",
+    "createdAt": "2026-08-27T23:02:00-03:00"
+  },
+  {
+    "orderNumber": 1351,
+    "rating": 3,
+    "comment": "Atendimento normal, sem problemas.",
+    "createdAt": "2026-08-28T04:53:00-03:00"
+  },
+  {
+    "orderNumber": 1364,
+    "rating": 5,
+    "comment": "Embalagem caprichada, chegou tudo intacto. Recomendo.",
+    "createdAt": "2026-08-29T04:57:00-03:00"
+  },
+  {
+    "orderNumber": 1383,
+    "rating": 5,
+    "comment": "Sabor incrível, tudo muito bem temperado.",
+    "createdAt": "2026-08-30T06:34:00-03:00"
+  },
+  {
+    "orderNumber": 1386,
+    "rating": 5,
+    "comment": "Sabor incrível, tudo muito bem temperado. Virei cliente.",
+    "createdAt": "2026-08-30T05:02:00-03:00"
+  },
+  {
+    "orderNumber": 1391,
+    "rating": 5,
+    "comment": "Equipe atenciosa, resolveram meu pedido especial sem problema.",
+    "createdAt": "2026-08-30T00:48:00-03:00"
+  },
+  {
+    "orderNumber": 1393,
+    "menuItem": "risoto-camarao",
+    "rating": 5,
+    "comment": "Melhor Risoto de Camarão que já pedi por delivery. Recomendo.",
+    "createdAt": "2026-08-31T02:43:00-03:00"
+  },
+  {
+    "orderNumber": 1397,
+    "rating": 5,
+    "comment": "Ótimo custo-benefício, porção generosa.",
+    "createdAt": "2026-08-31T01:11:00-03:00"
+  },
+  {
+    "orderNumber": 1398,
+    "menuItem": "pizza-pepperoni",
+    "rating": 5,
+    "comment": "Preço justo pela qualidade de Pizza Pepperoni.",
+    "createdAt": "2026-08-31T11:12:00-03:00"
+  },
+  {
+    "orderNumber": 1402,
+    "menuItem": "lasanha-bolonhesa",
+    "rating": 1,
+    "comment": "Lasanha à Bolonhesa veio sem sal e passou do ponto.",
+    "createdAt": "2026-08-31T07:53:00-03:00"
+  },
+  {
+    "orderNumber": 1403,
+    "rating": 5,
+    "comment": "Comida deliciosa e bem servida.",
+    "createdAt": "2026-08-30T16:34:00-03:00"
+  },
+  {
+    "orderNumber": 1405,
+    "menuItem": "parmegiana",
+    "rating": 5,
+    "comment": "Melhor Filé à Parmegiana que já pedi por delivery. Virei cliente.",
+    "createdAt": "2026-08-31T09:03:00-03:00"
+  },
+  {
+    "orderNumber": 1406,
+    "rating": 1,
+    "comment": "Atendente foi grosseiro quando liguei para perguntar do pedido.",
+    "createdAt": "2026-08-31T04:35:00-03:00"
+  },
+  {
+    "orderNumber": 1428,
+    "menuItem": "spaghetti-carbonara",
+    "rating": 3,
+    "comment": "Chegou no horário previsto. Spaghetti à Carbonara estava ok.",
+    "createdAt": "2026-09-02T05:11:00-03:00"
+  },
+  {
+    "orderNumber": 1430,
+    "menuItem": "pizza-pepperoni",
+    "rating": 4,
+    "comment": "Entrega antes do previsto e Pizza Pepperoni chegou em ótimo estado.",
+    "createdAt": "2026-09-02T23:39:00-03:00"
+  },
+  {
+    "orderNumber": 1438,
+    "menuItem": "nhoque-sugo",
+    "rating": 5,
+    "comment": "Preço justo pela qualidade de Nhoque ao Sugo. Vou pedir de novo!",
+    "createdAt": "2026-09-03T00:28:00-03:00"
+  },
+  {
+    "orderNumber": 1444,
+    "rating": 5,
+    "comment": "Comida deliciosa e bem servida.",
+    "createdAt": "2026-09-04T12:27:00-03:00"
+  },
+  {
+    "orderNumber": 1447,
+    "menuItem": "pizza-pepperoni",
+    "rating": 4,
+    "comment": "Preço justo pela qualidade de Pizza Pepperoni.",
+    "createdAt": "2026-09-03T22:07:00-03:00"
+  },
+  {
+    "orderNumber": 1454,
+    "menuItem": "pizza-margherita",
+    "rating": 4,
+    "comment": "Embalagem impecável para Pizza Margherita, sem vazar nada.",
+    "createdAt": "2026-09-05T08:54:00-03:00"
+  },
+  {
+    "orderNumber": 1469,
+    "rating": 4,
+    "comment": "Comida deliciosa e bem servida.",
+    "createdAt": "2026-09-05T07:24:00-03:00"
+  },
+  {
+    "orderNumber": 1475,
+    "rating": 1,
+    "comment": "Demorou mais de uma hora para chegar e a comida veio fria.",
+    "createdAt": "2026-09-06T13:31:00-03:00"
+  },
+  {
+    "orderNumber": 1477,
+    "menuItem": "pizza-pepperoni",
+    "rating": 4,
+    "comment": "Embalagem impecável para Pizza Pepperoni, sem vazar nada.",
+    "createdAt": "2026-09-06T07:40:00-03:00"
+  },
+  {
+    "orderNumber": 1484,
+    "rating": 3,
+    "comment": "Comida ok, nada de especial.",
+    "createdAt": "2026-09-05T20:13:00-03:00"
+  },
+  {
+    "orderNumber": 1498,
+    "menuItem": "pizza-margherita",
+    "rating": 2,
+    "comment": "Preço de Pizza Margherita alto demais para o tamanho da porção.",
+    "createdAt": "2026-09-07T06:01:00-03:00"
+  },
+  {
+    "orderNumber": 1501,
+    "rating": 5,
+    "comment": "Equipe atenciosa, resolveram meu pedido especial sem problema.",
+    "createdAt": "2026-09-06T19:21:00-03:00"
+  },
+  {
+    "orderNumber": 1504,
+    "menuItem": "pizza-quatro-queijos",
+    "rating": 1,
+    "comment": "Embalagem amassada e a comida chegou toda revirada. Pedi Pizza Quatro Queijos.",
+    "createdAt": "2026-09-07T10:49:00-03:00"
+  },
+  {
+    "orderNumber": 1505,
+    "menuItem": "fettuccine-alfredo",
+    "rating": 5,
+    "comment": "Melhor Fettuccine Alfredo que já pedi por delivery.",
+    "createdAt": "2026-09-07T18:54:00-03:00"
+  },
+  {
+    "orderNumber": 1506,
+    "rating": 3,
+    "comment": "Bom, mas já foi melhor.",
+    "createdAt": "2026-09-07T12:16:00-03:00"
+  },
+  {
+    "orderNumber": 1517,
+    "rating": 2,
+    "comment": "Atendente foi grosseiro quando liguei para perguntar do pedido.",
+    "createdAt": "2026-09-08T08:13:00-03:00"
+  },
+  {
+    "orderNumber": 1531,
+    "menuItem": "pizza-pepperoni",
+    "rating": 5,
+    "comment": "Melhor Pizza Pepperoni que já pedi por delivery.",
+    "createdAt": "2026-09-10T06:39:00-03:00"
+  },
+  {
+    "orderNumber": 1532,
+    "rating": 4,
+    "comment": "Sabor incrível, tudo muito bem temperado. Vou pedir de novo!",
+    "createdAt": "2026-09-10T13:11:00-03:00"
+  },
+  {
+    "orderNumber": 1538,
+    "rating": 5,
+    "comment": "Sabor incrível, tudo muito bem temperado.",
+    "createdAt": "2026-09-10T04:50:00-03:00"
+  },
+  {
+    "orderNumber": 1541,
+    "rating": 4,
+    "comment": "Embalagem caprichada, chegou tudo intacto.",
+    "createdAt": "2026-09-10T00:52:00-03:00"
+  },
+  {
+    "orderNumber": 1545,
+    "menuItem": "risoto-camarao",
+    "rating": 2,
+    "comment": "Pedi Risoto de Camarão e veio cru no meio, bem decepcionante.",
+    "createdAt": "2026-09-11T05:55:00-03:00"
+  },
+  {
+    "orderNumber": 1555,
+    "rating": 5,
+    "comment": "Atendimento muito educado, até mandaram um bilhetinho.",
+    "createdAt": "2026-09-10T17:19:00-03:00"
+  },
+  {
+    "orderNumber": 1559,
+    "menuItem": "risoto-camarao",
+    "rating": 1,
+    "comment": "Preço de Risoto de Camarão alto demais para o tamanho da porção. Esperava mais.",
+    "createdAt": "2026-09-12T13:52:00-03:00"
+  },
+  {
+    "orderNumber": 1562,
+    "menuItem": "risoto-camarao",
+    "rating": 5,
+    "comment": "Que delícia de Risoto de Camarão, no ponto certinho! Vou pedir de novo!",
+    "createdAt": "2026-09-12T08:08:00-03:00"
+  },
+  {
+    "orderNumber": 1590,
+    "menuItem": "lasanha-bolonhesa",
+    "rating": 5,
+    "comment": "Melhor Lasanha à Bolonhesa que já pedi por delivery.",
+    "createdAt": "2026-09-13T07:13:00-03:00"
+  },
+  {
+    "orderNumber": 1593,
+    "rating": 4,
+    "comment": "Comida deliciosa e bem servida.",
+    "createdAt": "2026-09-13T02:25:00-03:00"
+  },
+  {
+    "orderNumber": 1597,
+    "menuItem": "parmegiana",
+    "rating": 2,
+    "comment": "Pedi Filé à Parmegiana e a comida até estava boa, mas a entrega atrasou demais.",
+    "createdAt": "2026-09-13T10:38:00-03:00"
+  },
+  {
+    "orderNumber": 1607,
+    "rating": 2,
+    "comment": "Demorou mais de uma hora para chegar e a comida veio fria.",
+    "createdAt": "2026-09-13T23:36:00-03:00"
+  },
+  {
+    "orderNumber": 1613,
+    "rating": 1,
+    "comment": "Demorou mais de uma hora para chegar e a comida veio fria.",
+    "createdAt": "2026-09-14T05:23:00-03:00"
+  },
+  {
+    "orderNumber": 1615,
+    "menuItem": "spaghetti-carbonara",
+    "rating": 4,
+    "comment": "Preço justo pela qualidade de Spaghetti à Carbonara.",
+    "createdAt": "2026-09-14T11:16:00-03:00"
+  },
+  {
+    "orderNumber": 1618,
+    "menuItem": "spaghetti-carbonara",
+    "rating": 2,
+    "comment": "Embalagem amassada e a comida chegou toda revirada. Pedi Spaghetti à Carbonara.",
+    "createdAt": "2026-09-13T21:56:00-03:00"
+  },
+  {
+    "orderNumber": 1627,
+    "rating": 5,
+    "comment": "Comida deliciosa e bem servida.",
+    "createdAt": "2026-09-14T22:26:00-03:00"
+  },
+  {
+    "orderNumber": 1628,
+    "rating": 3,
+    "comment": "Comida ok, nada de especial.",
+    "createdAt": "2026-09-15T19:39:00-03:00"
+  },
+  {
+    "orderNumber": 1650,
+    "rating": 5,
+    "comment": "Chegou rapidinho e bem quentinho! Virei cliente.",
+    "createdAt": "2026-09-18T13:37:00-03:00"
+  },
+  {
+    "orderNumber": 1664,
+    "rating": 1,
+    "comment": "O pedido atrasou 91 minutos e ninguém avisou nada. Não peço mais.",
+    "createdAt": "2026-09-19T04:39:00-03:00"
+  },
+  {
+    "orderNumber": 1666,
+    "rating": 3,
+    "comment": "Embalagem simples, mas cumpriu o papel.",
+    "createdAt": "2026-09-18T19:09:00-03:00"
+  },
+  {
+    "orderNumber": 1668,
+    "rating": 5,
+    "comment": "Chegou rapidinho e bem quentinho! Vou pedir de novo!",
+    "createdAt": "2026-09-19T15:47:00-03:00"
+  },
+  {
+    "orderNumber": 1674,
+    "rating": 5,
+    "comment": "Atendimento muito educado, até mandaram um bilhetinho.",
+    "createdAt": "2026-09-19T00:05:00-03:00"
+  },
+  {
+    "orderNumber": 1682,
+    "rating": 4,
+    "comment": "Atendimento muito educado, até mandaram um bilhetinho. Recomendo.",
+    "createdAt": "2026-09-20T18:14:00-03:00"
+  },
+  {
+    "orderNumber": 1686,
+    "menuItem": "lasanha-bolonhesa",
+    "rating": 5,
+    "comment": "Que delícia de Lasanha à Bolonhesa, no ponto certinho!",
+    "createdAt": "2026-09-20T01:30:00-03:00"
+  },
+  {
+    "orderNumber": 1687,
+    "rating": 1,
+    "comment": "Pedi para trocar um item pelo chat e ninguém respondeu.",
+    "createdAt": "2026-09-20T09:12:00-03:00"
+  },
+  {
+    "orderNumber": 1699,
+    "menuItem": "pizza-portuguesa",
+    "rating": 5,
+    "comment": "Pizza Portuguesa estava incrível, sabor de cantina de verdade.",
+    "createdAt": "2026-09-20T13:24:00-03:00"
+  },
+  {
+    "orderNumber": 1712,
+    "rating": 3,
+    "comment": "Bom, mas já foi melhor.",
+    "createdAt": "2026-09-21T13:22:00-03:00"
+  },
+  {
+    "orderNumber": 1713,
+    "rating": 2,
+    "comment": "Comida gordurosa demais, não gostei do tempero. Esperava mais.",
+    "createdAt": "2026-09-21T02:35:00-03:00"
+  },
+  {
+    "orderNumber": 1717,
+    "menuItem": "nhoque-sugo",
+    "rating": 5,
+    "comment": "Preço justo pela qualidade de Nhoque ao Sugo.",
+    "createdAt": "2026-09-21T09:39:00-03:00"
+  },
+  {
+    "orderNumber": 1744,
+    "rating": 4,
+    "comment": "Sabor incrível, tudo muito bem temperado. Virei cliente.",
+    "createdAt": "2026-09-24T01:58:00-03:00"
+  },
+  {
+    "orderNumber": 1752,
+    "menuItem": "pizza-margherita",
+    "rating": 1,
+    "comment": "Pedi Pizza Margherita e a comida até estava boa, mas a entrega atrasou demais. Não peço mais.",
+    "createdAt": "2026-09-25T11:27:00-03:00"
+  },
+  {
+    "orderNumber": 1758,
+    "rating": 1,
+    "comment": "Pedi para trocar um item pelo chat e ninguém respondeu. Decepcionante.",
+    "createdAt": "2026-09-24T15:30:00-03:00"
+  },
+  {
+    "orderNumber": 1773,
+    "menuItem": "pizza-quatro-queijos",
+    "rating": 2,
+    "comment": "Entrega muito lenta, o pedido (Pizza Quatro Queijos) chegou frio.",
+    "createdAt": "2026-09-26T12:39:00-03:00"
+  },
+  {
+    "orderNumber": 1776,
+    "menuItem": "ravioli-ricota",
+    "rating": 5,
+    "comment": "Preço justo pela qualidade de Ravioli de Ricota e Espinafre. Vou pedir de novo!",
+    "createdAt": "2026-09-26T08:08:00-03:00"
+  },
+  {
+    "orderNumber": 1779,
+    "rating": 4,
+    "comment": "Atendimento muito educado, até mandaram um bilhetinho.",
+    "createdAt": "2026-09-25T19:25:00-03:00"
+  },
+  {
+    "orderNumber": 1792,
+    "rating": 2,
+    "comment": "O pedido atrasou 66 minutos e ninguém avisou nada.",
+    "createdAt": "2026-09-27T17:59:00-03:00"
+  },
+  {
+    "orderNumber": 1799,
+    "menuItem": "pizza-quatro-queijos",
+    "rating": 1,
+    "comment": "Pizza Quatro Queijos veio sem sal e passou do ponto.",
+    "createdAt": "2026-09-27T01:17:00-03:00"
+  },
+  {
+    "orderNumber": 1803,
+    "rating": 4,
+    "comment": "Comida deliciosa e bem servida.",
+    "createdAt": "2026-09-26T17:56:00-03:00"
+  },
+  {
+    "orderNumber": 1809,
+    "rating": 4,
+    "comment": "Sabor incrível, tudo muito bem temperado. Recomendo.",
+    "createdAt": "2026-09-28T07:49:00-03:00"
+  },
+  {
+    "orderNumber": 1824,
+    "menuItem": "nhoque-sugo",
+    "rating": 1,
+    "comment": "Achei Nhoque ao Sugo sem graça, esperava mais sabor.",
+    "createdAt": "2026-09-28T01:43:00-03:00"
+  },
+  {
+    "orderNumber": 1826,
+    "rating": 4,
+    "comment": "Sabor incrível, tudo muito bem temperado.",
+    "createdAt": "2026-09-28T08:25:00-03:00"
+  },
+  {
+    "orderNumber": 1841,
+    "rating": 4,
+    "comment": "Embalagem caprichada, chegou tudo intacto.",
+    "createdAt": "2026-09-29T19:14:00-03:00"
+  },
+  {
+    "orderNumber": 1851,
+    "rating": 2,
+    "comment": "Comida gordurosa demais, não gostei do tempero.",
+    "createdAt": "2026-10-01T01:24:00-03:00"
+  },
+  {
+    "orderNumber": 1856,
+    "menuItem": "pizza-quatro-queijos",
+    "rating": 5,
+    "comment": "Melhor Pizza Quatro Queijos que já pedi por delivery.",
+    "createdAt": "2026-10-02T12:39:00-03:00"
+  },
+  {
+    "orderNumber": 1862,
+    "rating": 5,
+    "comment": "Embalagem caprichada, chegou tudo intacto.",
+    "createdAt": "2026-10-02T09:32:00-03:00"
+  },
+  {
+    "orderNumber": 1877,
+    "rating": 5,
+    "comment": "Chegou rapidinho e bem quentinho!",
+    "createdAt": "2026-10-03T13:56:00-03:00"
+  },
+  {
+    "orderNumber": 1878,
+    "rating": 3,
+    "comment": "Bom, mas já foi melhor.",
+    "createdAt": "2026-10-02T23:16:00-03:00"
+  },
+  {
+    "orderNumber": 1883,
+    "menuItem": "pizza-calabresa",
+    "rating": 5,
+    "comment": "Pizza Calabresa estava incrível, sabor de cantina de verdade. Virei cliente.",
+    "createdAt": "2026-10-03T04:06:00-03:00"
+  },
+  {
+    "orderNumber": 1887,
+    "rating": 5,
+    "comment": "Ótimo custo-benefício, porção generosa.",
+    "createdAt": "2026-10-03T06:46:00-03:00"
+  },
+  {
+    "orderNumber": 1895,
+    "rating": 4,
+    "comment": "Sabor incrível, tudo muito bem temperado.",
+    "createdAt": "2026-10-04T04:47:00-03:00"
+  },
+  {
+    "orderNumber": 1902,
+    "rating": 4,
+    "comment": "Chegou rapidinho e bem quentinho! Vou pedir de novo!",
+    "createdAt": "2026-10-03T18:51:00-03:00"
+  },
+  {
+    "orderNumber": 1904,
+    "rating": 2,
+    "comment": "Demorou mais de uma hora para chegar e a comida veio fria.",
+    "createdAt": "2026-10-04T07:41:00-03:00"
+  },
+  {
+    "orderNumber": 1905,
+    "rating": 3,
+    "comment": "Comida ok, nada de especial.",
+    "createdAt": "2026-10-03T22:33:00-03:00"
+  },
+  {
+    "orderNumber": 1908,
+    "menuItem": "risoto-camarao",
+    "rating": 1,
+    "comment": "Risoto de Camarão veio sem sal e passou do ponto.",
+    "createdAt": "2026-10-04T05:27:00-03:00"
+  },
+  {
+    "orderNumber": 1911,
+    "menuItem": "lasanha-bolonhesa",
+    "rating": 4,
+    "comment": "Lasanha à Bolonhesa estava incrível, sabor de cantina de verdade. Recomendo.",
+    "createdAt": "2026-10-05T05:16:00-03:00"
+  },
+  {
+    "orderNumber": 1917,
+    "menuItem": "pizza-margherita",
+    "rating": 5,
+    "comment": "Pizza Margherita estava incrível, sabor de cantina de verdade. Recomendo.",
+    "createdAt": "2026-10-05T04:18:00-03:00"
+  },
+  {
+    "orderNumber": 1924,
+    "rating": 4,
+    "comment": "Comida deliciosa e bem servida.",
+    "createdAt": "2026-10-05T11:00:00-03:00"
+  },
+  {
+    "orderNumber": 1925,
+    "rating": 5,
+    "comment": "Comida deliciosa e bem servida.",
+    "createdAt": "2026-10-05T01:20:00-03:00"
+  },
+  {
+    "orderNumber": 1936,
+    "menuItem": "lasanha-bolonhesa",
+    "rating": 5,
+    "comment": "Melhor Lasanha à Bolonhesa que já pedi por delivery. Vou pedir de novo!",
+    "createdAt": "2026-10-05T14:23:00-03:00"
+  },
+  {
+    "orderNumber": 1944,
+    "menuItem": "pizza-quatro-queijos",
+    "rating": 4,
+    "comment": "Pizza Quatro Queijos estava incrível, sabor de cantina de verdade.",
+    "createdAt": "2026-10-07T04:08:00-03:00"
+  },
+  {
+    "orderNumber": 1947,
+    "menuItem": "pizza-quatro-queijos",
+    "rating": 1,
+    "comment": "Pelo que custa Pizza Quatro Queijos, esperava bem mais na porção.",
+    "createdAt": "2026-10-08T08:41:00-03:00"
+  },
+  {
+    "orderNumber": 1953,
+    "rating": 5,
+    "comment": "Comida deliciosa e bem servida.",
+    "createdAt": "2026-10-08T17:27:00-03:00"
+  },
+  {
+    "orderNumber": 1970,
+    "menuItem": "pizza-margherita",
+    "rating": 1,
+    "comment": "Pedi Pizza Margherita e veio cru no meio, bem decepcionante.",
+    "createdAt": "2026-10-09T22:53:00-03:00"
+  },
+  {
+    "orderNumber": 1979,
+    "menuItem": "pizza-quatro-queijos",
+    "rating": 5,
+    "comment": "Que delícia de Pizza Quatro Queijos, no ponto certinho! Virei cliente.",
+    "createdAt": "2026-10-10T02:09:00-03:00"
+  },
+  {
+    "orderNumber": 1980,
+    "rating": 5,
+    "comment": "Atendimento muito educado, até mandaram um bilhetinho. Virei cliente.",
+    "createdAt": "2026-10-10T04:13:00-03:00"
+  },
+  {
+    "orderNumber": 1986,
+    "menuItem": "parmegiana",
+    "rating": 5,
+    "comment": "Filé à Parmegiana estava incrível, sabor de cantina de verdade. Vou pedir de novo!",
+    "createdAt": "2026-10-10T08:12:00-03:00"
+  },
+  {
+    "orderNumber": 1987,
+    "rating": 2,
+    "comment": "Pedi para trocar um item pelo chat e ninguém respondeu.",
+    "createdAt": "2026-10-11T15:30:00-03:00"
+  },
+  {
+    "orderNumber": 1997,
+    "rating": 1,
+    "comment": "Demorou mais de uma hora para chegar e a comida veio fria.",
+    "createdAt": "2026-10-10T23:01:00-03:00"
+  },
+  {
+    "orderNumber": 2001,
+    "rating": 3,
+    "comment": "Comida ok, nada de especial.",
+    "createdAt": "2026-10-10T15:26:00-03:00"
+  },
+  {
+    "orderNumber": 2005,
+    "menuItem": "lasanha-bolonhesa",
+    "rating": 2,
+    "comment": "Embalagem amassada e a comida chegou toda revirada. Pedi Lasanha à Bolonhesa.",
+    "createdAt": "2026-10-10T23:44:00-03:00"
+  },
+  {
+    "orderNumber": 2008,
+    "rating": 2,
+    "comment": "Demorou mais de uma hora para chegar e a comida veio fria. Esperava mais.",
+    "createdAt": "2026-10-11T08:32:00-03:00"
+  },
+  {
+    "orderNumber": 2014,
+    "menuItem": "pizza-pepperoni",
+    "rating": 5,
+    "comment": "Entrega antes do previsto e Pizza Pepperoni chegou em ótimo estado.",
+    "createdAt": "2026-10-12T02:05:00-03:00"
+  },
+  {
+    "orderNumber": 2017,
+    "menuItem": "fettuccine-alfredo",
+    "rating": 2,
+    "comment": "Preço salgado: a porção de Fettuccine Alfredo é pequena. Esperava mais.",
+    "createdAt": "2026-10-12T05:14:00-03:00"
+  },
+  {
+    "orderNumber": 2023,
+    "menuItem": "lasanha-bolonhesa",
+    "rating": 5,
+    "comment": "Embalagem impecável para Lasanha à Bolonhesa, sem vazar nada.",
+    "createdAt": "2026-10-11T19:08:00-03:00"
+  },
+  {
+    "orderNumber": 2034,
+    "rating": 5,
+    "comment": "Atendimento muito educado, até mandaram um bilhetinho.",
+    "createdAt": "2026-10-13T02:41:00-03:00"
+  },
+  {
+    "orderNumber": 2045,
+    "rating": 3,
+    "comment": "Preço justo, nada além do esperado.",
+    "createdAt": "2026-10-14T20:33:00-03:00"
+  },
+  {
+    "orderNumber": 2060,
+    "menuItem": "nhoque-sugo",
+    "rating": 5,
+    "comment": "Nhoque ao Sugo estava incrível, sabor de cantina de verdade.",
+    "createdAt": "2026-10-16T15:23:00-03:00"
+  },
+  {
+    "orderNumber": 2062,
+    "rating": 4,
+    "comment": "Embalagem caprichada, chegou tudo intacto. Vou pedir de novo!",
+    "createdAt": "2026-10-16T02:51:00-03:00"
+  },
+  {
+    "orderNumber": 2074,
+    "menuItem": "pizza-quatro-queijos",
+    "rating": 4,
+    "comment": "Pizza Quatro Queijos estava incrível, sabor de cantina de verdade.",
+    "createdAt": "2026-10-17T16:23:00-03:00"
+  },
+  {
+    "orderNumber": 2083,
+    "rating": 3,
+    "comment": "Embalagem simples, mas cumpriu o papel.",
+    "createdAt": "2026-10-17T01:00:00-03:00"
+  },
+  {
+    "orderNumber": 2090,
+    "rating": 3,
+    "comment": "Entrega dentro do prazo, comida normal.",
+    "createdAt": "2026-10-18T08:01:00-03:00"
+  },
+  {
+    "orderNumber": 2107,
+    "rating": 5,
+    "comment": "Chegou rapidinho e bem quentinho!",
+    "createdAt": "2026-10-18T03:37:00-03:00"
+  },
+  {
+    "orderNumber": 2118,
+    "menuItem": "pizza-portuguesa",
+    "rating": 5,
+    "comment": "Pizza Portuguesa estava incrível, sabor de cantina de verdade.",
+    "createdAt": "2026-10-18T19:01:00-03:00"
+  },
+  {
+    "orderNumber": 2134,
+    "rating": 4,
+    "comment": "Ótimo custo-benefício, porção generosa.",
+    "createdAt": "2026-10-20T08:47:00-03:00"
+  },
+  {
+    "orderNumber": 2135,
+    "menuItem": "nhoque-sugo",
+    "rating": 5,
+    "comment": "Preço justo pela qualidade de Nhoque ao Sugo.",
+    "createdAt": "2026-10-20T00:03:00-03:00"
+  },
+  {
+    "orderNumber": 2138,
+    "menuItem": "pizza-calabresa",
+    "rating": 4,
+    "comment": "Entrega antes do previsto e Pizza Calabresa chegou em ótimo estado.",
+    "createdAt": "2026-10-19T23:46:00-03:00"
+  },
+  {
+    "orderNumber": 2140,
+    "menuItem": "lasanha-bolonhesa",
+    "rating": 5,
+    "comment": "Lasanha à Bolonhesa estava incrível, sabor de cantina de verdade.",
+    "createdAt": "2026-10-19T23:41:00-03:00"
+  },
+  {
+    "orderNumber": 2145,
+    "rating": 4,
+    "comment": "Comida deliciosa e bem servida.",
+    "createdAt": "2026-10-21T05:40:00-03:00"
+  },
+  {
+    "orderNumber": 2151,
+    "menuItem": "pizza-margherita",
+    "rating": 1,
+    "comment": "Achei Pizza Margherita sem graça, esperava mais sabor. Não peço mais.",
+    "createdAt": "2026-10-22T03:28:00-03:00"
+  },
+  {
+    "orderNumber": 2156,
+    "menuItem": "pizza-quatro-queijos",
+    "rating": 5,
+    "comment": "Que delícia de Pizza Quatro Queijos, no ponto certinho!",
+    "createdAt": "2026-10-22T00:02:00-03:00"
+  },
+  {
+    "orderNumber": 2159,
+    "menuItem": "pizza-quatro-queijos",
+    "rating": 5,
+    "comment": "Pizza Quatro Queijos estava incrível, sabor de cantina de verdade. Vou pedir de novo!",
+    "createdAt": "2026-10-23T14:44:00-03:00"
+  },
+  {
+    "orderNumber": 2163,
+    "menuItem": "spaghetti-carbonara",
+    "rating": 2,
+    "comment": "Embalagem amassada e a comida chegou toda revirada. Pedi Spaghetti à Carbonara.",
+    "createdAt": "2026-10-23T15:41:00-03:00"
+  },
+  {
+    "orderNumber": 2170,
+    "menuItem": "spaghetti-carbonara",
+    "rating": 5,
+    "comment": "Entrega antes do previsto e Spaghetti à Carbonara chegou em ótimo estado.",
+    "createdAt": "2026-10-23T00:24:00-03:00"
+  },
+  {
+    "orderNumber": 2175,
+    "menuItem": "risoto-funghi",
+    "rating": 2,
+    "comment": "Achei Risoto de Funghi sem graça, esperava mais sabor. Não peço mais.",
+    "createdAt": "2026-10-23T23:54:00-03:00"
+  },
+  {
+    "orderNumber": 2193,
+    "rating": 4,
+    "comment": "Chegou rapidinho e bem quentinho!",
+    "createdAt": "2026-10-25T12:21:00-03:00"
+  },
+  {
+    "orderNumber": 2201,
+    "rating": 4,
+    "comment": "Atendimento muito educado, até mandaram um bilhetinho. Vou pedir de novo!",
+    "createdAt": "2026-10-24T18:29:00-03:00"
+  },
+  {
+    "orderNumber": 2213,
+    "rating": 2,
+    "comment": "Mandaram o pedido errado e o suporte demorou para resolver.",
+    "createdAt": "2026-10-26T02:56:00-03:00"
+  },
+  {
+    "orderNumber": 2222,
+    "rating": 4,
+    "comment": "Equipe atenciosa, resolveram meu pedido especial sem problema.",
+    "createdAt": "2026-10-26T04:30:00-03:00"
+  },
+  {
+    "orderNumber": 2234,
+    "menuItem": "risoto-camarao",
+    "rating": 2,
+    "comment": "Preço de Risoto de Camarão alto demais para o tamanho da porção.",
+    "createdAt": "2026-10-27T12:23:00-03:00"
+  },
+  {
+    "orderNumber": 2245,
+    "rating": 2,
+    "comment": "Comida gordurosa demais, não gostei do tempero. Decepcionante.",
+    "createdAt": "2026-10-28T02:55:00-03:00"
+  },
+  {
+    "orderNumber": 2246,
+    "rating": 1,
+    "comment": "Embalagem frágil, a tampa abriu no caminho e sujou tudo. Não peço mais.",
+    "createdAt": "2026-10-28T23:08:00-03:00"
+  },
+  {
+    "orderNumber": 2251,
+    "rating": 5,
+    "comment": "Equipe atenciosa, resolveram meu pedido especial sem problema. Vou pedir de novo!",
+    "createdAt": "2026-10-29T11:01:00-03:00"
+  },
+  {
+    "orderNumber": 2264,
+    "rating": 5,
+    "comment": "Sabor incrível, tudo muito bem temperado. Vou pedir de novo!",
+    "createdAt": "2026-10-30T13:37:00-03:00"
+  },
+  {
+    "orderNumber": 2266,
+    "rating": 1,
+    "comment": "Mandaram o pedido errado e o suporte demorou para resolver.",
+    "createdAt": "2026-10-30T12:22:00-03:00"
+  },
+  {
+    "orderNumber": 2268,
+    "menuItem": "pizza-portuguesa",
+    "rating": 5,
+    "comment": "Que delícia de Pizza Portuguesa, no ponto certinho!",
+    "createdAt": "2026-10-30T16:45:00-03:00"
+  },
+  {
+    "orderNumber": 2276,
+    "menuItem": "lasanha-bolonhesa",
+    "rating": 2,
+    "comment": "O molho de Lasanha à Bolonhesa vazou da embalagem. Precisam rever isso.",
+    "createdAt": "2026-10-30T16:02:00-03:00"
+  },
+  {
+    "orderNumber": 2278,
+    "menuItem": "parmegiana",
+    "rating": 4,
+    "comment": "Embalagem impecável para Filé à Parmegiana, sem vazar nada. Virei cliente.",
+    "createdAt": "2026-10-31T03:47:00-03:00"
+  },
+  {
+    "orderNumber": 2317,
+    "rating": 1,
+    "comment": "Esperei quase uma hora e meia pelo pedido numa sexta à noite.",
+    "createdAt": "2026-11-02T12:35:00-03:00"
+  },
+  {
+    "orderNumber": 2318,
+    "rating": 4,
+    "comment": "Equipe atenciosa, resolveram meu pedido especial sem problema.",
+    "createdAt": "2026-11-01T15:51:00-03:00"
+  },
+  {
+    "orderNumber": 2332,
+    "rating": 5,
+    "comment": "Equipe atenciosa, resolveram meu pedido especial sem problema.",
+    "createdAt": "2026-11-02T07:07:00-03:00"
+  },
+  {
+    "orderNumber": 2337,
+    "rating": 1,
+    "comment": "Atendente foi grosseiro quando liguei para perguntar do pedido.",
+    "createdAt": "2026-11-03T01:37:00-03:00"
+  },
+  {
+    "orderNumber": 2345,
+    "menuItem": "risoto-camarao",
+    "rating": 2,
+    "comment": "Pedi Risoto de Camarão e veio cru no meio, bem decepcionante.",
+    "createdAt": "2026-11-03T11:54:00-03:00"
+  },
+  {
+    "orderNumber": 2348,
+    "rating": 5,
+    "comment": "Embalagem caprichada, chegou tudo intacto.",
+    "createdAt": "2026-11-03T22:42:00-03:00"
+  },
+  {
+    "orderNumber": 2364,
+    "rating": 5,
+    "comment": "Ótimo custo-benefício, porção generosa.",
+    "createdAt": "2026-11-05T08:08:00-03:00"
+  },
+  {
+    "orderNumber": 2367,
+    "menuItem": "risoto-camarao",
+    "rating": 2,
+    "comment": "Preço salgado: a porção de Risoto de Camarão é pequena.",
+    "createdAt": "2026-11-06T00:39:00-03:00"
+  },
+  {
+    "orderNumber": 2371,
+    "rating": 1,
+    "comment": "Mandaram o pedido errado e o suporte demorou para resolver.",
+    "createdAt": "2026-11-06T18:02:00-03:00"
+  },
+  {
+    "orderNumber": 2376,
+    "rating": 5,
+    "comment": "Ótimo custo-benefício, porção generosa.",
+    "createdAt": "2026-11-06T01:33:00-03:00"
+  },
+  {
+    "orderNumber": 2387,
+    "menuItem": "pizza-margherita",
+    "rating": 1,
+    "comment": "Pedi Pizza Margherita e a comida até estava boa, mas a entrega atrasou demais. Decepcionante.",
+    "createdAt": "2026-11-07T10:53:00-03:00"
+  },
+  {
+    "orderNumber": 2394,
+    "menuItem": "fettuccine-alfredo",
+    "rating": 5,
+    "comment": "Melhor Fettuccine Alfredo que já pedi por delivery.",
+    "createdAt": "2026-11-06T22:55:00-03:00"
+  },
+  {
+    "orderNumber": 2397,
+    "menuItem": "nhoque-sugo",
+    "rating": 1,
+    "comment": "Entrega muito lenta, o pedido (Nhoque ao Sugo) chegou frio.",
+    "createdAt": "2026-11-07T07:08:00-03:00"
+  },
+  {
+    "orderNumber": 2400,
+    "menuItem": "risoto-camarao",
+    "rating": 5,
+    "comment": "Risoto de Camarão estava incrível, sabor de cantina de verdade. Recomendo.",
+    "createdAt": "2026-11-06T16:34:00-03:00"
+  },
+  {
+    "orderNumber": 2410,
+    "menuItem": "pizza-quatro-queijos",
+    "rating": 5,
+    "comment": "Que delícia de Pizza Quatro Queijos, no ponto certinho!",
+    "createdAt": "2026-11-07T22:53:00-03:00"
+  },
+  {
+    "orderNumber": 2412,
+    "rating": 3,
+    "comment": "Preço justo, nada além do esperado.",
+    "createdAt": "2026-11-08T05:38:00-03:00"
+  },
+  {
+    "orderNumber": 2416,
+    "menuItem": "fettuccine-alfredo",
+    "rating": 3,
+    "comment": "Fettuccine Alfredo estava razoável, já comi melhores.",
+    "createdAt": "2026-11-08T00:30:00-03:00"
+  },
+  {
+    "orderNumber": 2424,
+    "menuItem": "lasanha-bolonhesa",
+    "rating": 2,
+    "comment": "Pedi Lasanha à Bolonhesa e a comida até estava boa, mas a entrega atrasou demais.",
+    "createdAt": "2026-11-07T20:15:00-03:00"
+  },
+  {
+    "orderNumber": 2429,
+    "menuItem": "pizza-calabresa",
+    "rating": 5,
+    "comment": "Que delícia de Pizza Calabresa, no ponto certinho!",
+    "createdAt": "2026-11-07T22:10:00-03:00"
+  },
+  {
+    "orderNumber": 2432,
+    "rating": 1,
+    "comment": "Esperei quase uma hora e meia pelo pedido numa sexta à noite.",
+    "createdAt": "2026-11-08T05:51:00-03:00"
+  },
+  {
+    "orderNumber": 2439,
+    "menuItem": "lasanha-bolonhesa",
+    "rating": 5,
+    "comment": "Que delícia de Lasanha à Bolonhesa, no ponto certinho!",
+    "createdAt": "2026-11-09T04:18:00-03:00"
+  },
+  {
+    "orderNumber": 2442,
+    "menuItem": "lasanha-bolonhesa",
+    "rating": 2,
+    "comment": "Lasanha à Bolonhesa veio sem sal e passou do ponto.",
+    "createdAt": "2026-11-09T05:04:00-03:00"
+  },
+  {
+    "orderNumber": 2444,
+    "menuItem": "pizza-calabresa",
+    "rating": 5,
+    "comment": "Preço justo pela qualidade de Pizza Calabresa. Vou pedir de novo!",
+    "createdAt": "2026-11-09T14:10:00-03:00"
+  },
+  {
+    "orderNumber": 2450,
+    "menuItem": "pizza-pepperoni",
+    "rating": 4,
+    "comment": "Entrega antes do previsto e Pizza Pepperoni chegou em ótimo estado. Vou pedir de novo!",
+    "createdAt": "2026-11-09T02:48:00-03:00"
+  },
+  {
+    "orderNumber": 2454,
+    "rating": 3,
+    "comment": "Comida ok, nada de especial.",
+    "createdAt": "2026-11-09T06:10:00-03:00"
+  },
+  {
+    "orderNumber": 2456,
+    "rating": 5,
+    "comment": "Atendimento muito educado, até mandaram um bilhetinho.",
+    "createdAt": "2026-11-09T06:11:00-03:00"
+  }
+]

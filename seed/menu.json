@@ -1,0 +1,170 @@
+[
+  {
+    "key": "bruschetta",
+    "name": "Bruschetta Tradicional",
+    "description": "Pão italiano, tomate, manjericão e azeite.",
+    "category": "Starter",
+    "price": 32.90
+  },
+  {
+    "key": "burrata",
+    "name": "Burrata com Tomates",
+    "description": "Burrata cremosa, tomates confitados e pesto.",
+    "category": "Starter",
+    "price": 58.90
+  },
+  {
+    "key": "arancini",
+    "name": "Arancini de Queijo",
+    "description": "Bolinhos de risoto recheados com muçarela (6 unidades).",
+    "category": "Starter",
+    "price": 36.90
+  },
+  {
+    "key": "pizza-margherita",
+    "name": "Pizza Margherita",
+    "description": "Molho de tomate, muçarela de búfala e manjericão.",
+    "category": "Pizza",
+    "price": 64.90
+  },
+  {
+    "key": "pizza-calabresa",
+    "name": "Pizza Calabresa",
+    "description": "Calabresa artesanal, cebola roxa e azeitonas.",
+    "category": "Pizza",
+    "price": 62.90
+  },
+  {
+    "key": "pizza-quatro-queijos",
+    "name": "Pizza Quatro Queijos",
+    "description": "Muçarela, gorgonzola, parmesão e provolone.",
+    "category": "Pizza",
+    "price": 69.90
+  },
+  {
+    "key": "pizza-pepperoni",
+    "name": "Pizza Pepperoni",
+    "description": "Pepperoni fatiado fino e muçarela.",
+    "category": "Pizza",
+    "price": 71.90
+  },
+  {
+    "key": "pizza-portuguesa",
+    "name": "Pizza Portuguesa",
+    "description": "Presunto, ovos, cebola, ervilha e muçarela.",
+    "category": "Pizza",
+    "price": 66.90
+  },
+  {
+    "key": "lasanha-bolonhesa",
+    "name": "Lasanha à Bolonhesa",
+    "description": "Massa fresca, ragu de carne e molho branco gratinado.",
+    "category": "Pasta",
+    "price": 54.90
+  },
+  {
+    "key": "spaghetti-carbonara",
+    "name": "Spaghetti à Carbonara",
+    "description": "Guanciale, gema, pecorino e pimenta-do-reino.",
+    "category": "Pasta",
+    "price": 52.90
+  },
+  {
+    "key": "fettuccine-alfredo",
+    "name": "Fettuccine Alfredo",
+    "description": "Molho de manteiga e parmesão.",
+    "category": "Pasta",
+    "price": 49.90
+  },
+  {
+    "key": "nhoque-sugo",
+    "name": "Nhoque ao Sugo",
+    "description": "Nhoque de batata com molho de tomate fresco.",
+    "category": "Pasta",
+    "price": 46.90
+  },
+  {
+    "key": "ravioli-ricota",
+    "name": "Ravioli de Ricota e Espinafre",
+    "description": "Ao molho de manteiga e sálvia.",
+    "category": "Pasta",
+    "price": 56.90
+  },
+  {
+    "key": "risoto-camarao",
+    "name": "Risoto de Camarão",
+    "description": "Arbóreo, camarões salteados e limão-siciliano.",
+    "category": "Risotto",
+    "price": 89.90
+  },
+  {
+    "key": "risoto-funghi",
+    "name": "Risoto de Funghi",
+    "description": "Arbóreo com mix de cogumelos e parmesão.",
+    "category": "Risotto",
+    "price": 68.90
+  },
+  {
+    "key": "parmegiana",
+    "name": "Filé à Parmegiana",
+    "description": "Filé empanado, molho de tomate e muçarela, com arroz.",
+    "category": "MainCourse",
+    "price": 74.90
+  },
+  {
+    "key": "frango-limao",
+    "name": "Frango ao Limão",
+    "description": "Peito grelhado ao molho de limão, com legumes.",
+    "category": "MainCourse",
+    "price": 48.90
+  },
+  {
+    "key": "tiramisu",
+    "name": "Tiramisù",
+    "description": "Biscoito champagne, café, mascarpone e cacau.",
+    "category": "Dessert",
+    "price": 29.90
+  },
+  {
+    "key": "panna-cotta",
+    "name": "Panna Cotta de Frutas Vermelhas",
+    "description": "Creme cozido com calda de frutas vermelhas.",
+    "category": "Dessert",
+    "price": 24.90
+  },
+  {
+    "key": "cannoli",
+    "name": "Cannoli Siciliano",
+    "description": "Massa crocante recheada com ricota doce (2 unidades).",
+    "category": "Dessert",
+    "price": 26.90
+  },
+  {
+    "key": "refrigerante",
+    "name": "Refrigerante Lata",
+    "description": "350 ml.",
+    "category": "Drink",
+    "price": 7.90
+  },
+  {
+    "key": "suco-laranja",
+    "name": "Suco de Laranja",
+    "description": "Natural, 500 ml.",
+    "category": "Drink",
+    "price": 12.90
+  },
+  {
+    "key": "agua",
+    "name": "Água Mineral",
+    "description": "500 ml, com ou sem gás.",
+    "category": "Drink",
+    "price": 5.90
+  },
+  {
+    "key": "vinho-taca",
+    "name": "Taça de Vinho Tinto",
+    "description": "Vinho tinto da casa, 150 ml.",
+    "category": "Drink",
+    "price": 28.90
+  }
+]
