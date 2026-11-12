@@ -45,6 +45,19 @@ dotnet_naming_symbols.private_fields.applicable_accessibilities = private
 dotnet_naming_style.underscore_camel_case.capitalization = camel_case
 dotnet_naming_style.underscore_camel_case.required_prefix = _
 
+# Constants and static readonly fields are PascalCase (more specific, so it wins over the rule above)
+dotnet_naming_rule.constants_pascal_case.symbols = constants
+dotnet_naming_rule.constants_pascal_case.style = pascal_case
+dotnet_naming_rule.constants_pascal_case.severity = warning
+dotnet_naming_symbols.constants.applicable_kinds = field
+dotnet_naming_symbols.constants.required_modifiers = const
+dotnet_naming_rule.static_readonly_pascal_case.symbols = static_readonly_fields
+dotnet_naming_rule.static_readonly_pascal_case.style = pascal_case
+dotnet_naming_rule.static_readonly_pascal_case.severity = warning
+dotnet_naming_symbols.static_readonly_fields.applicable_kinds = field
+dotnet_naming_symbols.static_readonly_fields.required_modifiers = static, readonly
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+
 # Async methods end with Async
 dotnet_naming_rule.async_methods_suffix.symbols = async_methods
 dotnet_naming_rule.async_methods_suffix.style = async_suffix
@@ -58,7 +71,7 @@ dotnet_naming_style.async_suffix.required_suffix = Async
 dotnet_diagnostic.CA1848.severity = none   # LoggerMessage delegates: verbosity not worth it here
 dotnet_diagnostic.CA2007.severity = none   # ConfigureAwait: no SynchronizationContext in ASP.NET Core
 
-[tests/**.cs]
+[backend/tests/**.cs]
 # Test method names use underscores (Method_Scenario_Expected)
 dotnet_diagnostic.CA1707.severity = none
 dotnet_naming_rule.async_methods_suffix.severity = none
