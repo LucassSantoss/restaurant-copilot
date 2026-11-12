@@ -39,6 +39,7 @@ public static class DependencyInjection
         services.AddScoped<IMenuItemRepository, MenuItemRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
+        services.AddScoped<ISalesRepository, SalesRepository>();
         services.AddScoped<IVectorStore, PgvectorVectorStore>();
     }
 
