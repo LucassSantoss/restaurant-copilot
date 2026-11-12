@@ -76,7 +76,9 @@ A regra não é só convenção: **testes de arquitetura** (`NetArchTest`) quebr
 4. Ferramenta inexistente ou argumento inválido viram uma mensagem de erro **para o modelo**, que se corrige no turno seguinte.
 5. A resposta final volta com `sources` (ferramentas e documentos), `toolCalls` e uso de tokens, e é gravada no cache.
 
-**Diagramas:** serão adicionados em [`docs/diagrams/`](docs/diagrams/) (Mermaid).
+![Diagrama de arquitetura: navegador, frontend, API em camadas, PostgreSQL com pgvector, Redis e Gemini](docs/images/architecture.jpg)
+
+Versões em Mermaid (versionadas como texto) serão adicionadas em [`docs/diagrams/`](docs/diagrams/).
 
 ### Estrutura do repositório
 
