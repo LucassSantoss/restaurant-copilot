@@ -10,6 +10,6 @@ internal static class PersistenceConfiguration
     /// </summary>
     public static void Configure(DbContextOptionsBuilder options, string connectionString) =>
         options
-            .UseNpgsql(connectionString)
+            .UseNpgsql(connectionString, npgsql => npgsql.UseVector())
             .UseSnakeCaseNamingConvention();
 }

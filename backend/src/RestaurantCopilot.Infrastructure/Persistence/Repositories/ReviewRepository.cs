@@ -18,6 +18,18 @@ internal sealed class ReviewRepository(ApplicationDbContext dbContext) : IReview
     public Task<int> CountUnclassifiedAsync(CancellationToken cancellationToken) =>
         dbContext.Reviews.CountAsync(review => review.ClassifiedAt == null, cancellationToken);
 
+    public async Task<IReadOnlyList<ReviewDocumentRow>> ListForIndexingAsync(CancellationToken cancellationToken) =>
+        await dbContext.Reviews
+            .AsNoTracking()
+            .OrderBy(review => review.CreatedAt)
+            .Select(review => new ReviewDocumentRow(
+                review.Id,
+                review.Rating.Value,
+                review.Comment,
+                review.CreatedAt,
+                dbContext.MenuItems.Where(item => item.Id == review.MenuItemId).Select(item => item.Name).FirstOrDefault()))
+            .ToListAsync(cancellationToken);
+
     public async Task<IReadOnlyList<ReviewInsightRow>> ListForInsightsAsync(
         DateTimeOffset startUtc,
         DateTimeOffset endUtc,

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using Pgvector;
 using RestaurantCopilot.Infrastructure.Persistence;
 
 #nullable disable
@@ -20,6 +21,7 @@ namespace RestaurantCopilot.Infrastructure.Persistence.Migrations
                 .HasAnnotation("ProductVersion", "10.0.15")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "vector");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("RestaurantCopilot.Domain.MenuItems.MenuItem", b =>
@@ -238,6 +240,53 @@ namespace RestaurantCopilot.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_reviews_order_id");
 
                     b.ToTable("reviews", (string)null);
+                });
+
+            modelBuilder.Entity("RestaurantCopilot.Infrastructure.Search.SearchDocument", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("content");
+
+                    b.Property<Vector>("Embedding")
+                        .IsRequired()
+                        .HasColumnType("vector(768)")
+                        .HasColumnName("embedding");
+
+                    b.Property<DateTimeOffset>("IndexedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("indexed_at");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("source");
+
+                    b.Property<Guid>("SourceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("source_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_search_documents");
+
+                    b.HasIndex("Embedding")
+                        .HasDatabaseName("ix_search_documents_embedding");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Embedding"), "hnsw");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("Embedding"), new[] { "vector_cosine_ops" });
+
+                    b.HasIndex("Source", "SourceId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_search_documents_source_source_id");
+
+                    b.ToTable("search_documents", (string)null);
                 });
 
             modelBuilder.Entity("RestaurantCopilot.Domain.Orders.OrderItem", b =>

@@ -1,10 +1,12 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RestaurantCopilot.Application.Abstractions.Persistence;
+using RestaurantCopilot.Application.Abstractions.Search;
 using RestaurantCopilot.Infrastructure.Ai.Gemini;
 using RestaurantCopilot.Infrastructure.Persistence;
 using RestaurantCopilot.Infrastructure.Persistence.Repositories;
 using RestaurantCopilot.Infrastructure.Persistence.Seeding;
+using RestaurantCopilot.Infrastructure.Search;
 
 namespace RestaurantCopilot.Infrastructure;
 
@@ -37,6 +39,7 @@ public static class DependencyInjection
         services.AddScoped<IMenuItemRepository, MenuItemRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
+        services.AddScoped<IVectorStore, PgvectorVectorStore>();
     }
 
     private static string GetRequiredConnectionString(this IConfiguration configuration, string name) =>
