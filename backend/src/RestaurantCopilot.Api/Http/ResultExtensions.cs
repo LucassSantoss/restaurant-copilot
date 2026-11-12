@@ -8,8 +8,12 @@ internal static class ResultExtensions
     public static IResult ToHttpResult<T>(this Result<T> result) =>
         result.IsSuccess ? TypedResults.Ok(result.Value) : result.Error.ToProblem();
 
-    public static IResult ToProblem(this Error error) =>
-        TypedResults.Problem(
+    public static IResult ToCreatedHttpResult<T>(this Result<T> result) =>
+        result.IsSuccess ? TypedResults.Created((string?)null, result.Value) : result.Error.ToProblem();
+
+    public static IResult ToProblem(this Error error) => error is ValidationError validation
+        ? TypedResults.ValidationProblem(validation.Errors, title: validation.Message)
+        : TypedResults.Problem(
             statusCode: error.Type switch
             {
                 ErrorType.Validation => StatusCodes.Status400BadRequest,

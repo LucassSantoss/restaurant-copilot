@@ -52,6 +52,8 @@ try
     }
 
     app.MapMenuEndpoints();
+    app.MapReviewEndpoints();
+    app.MapIngestionEndpoints();
 
     app.MapHealthChecks("/health", new HealthCheckOptions
     {
