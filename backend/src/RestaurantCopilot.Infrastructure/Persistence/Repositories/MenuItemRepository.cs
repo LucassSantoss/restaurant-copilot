@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using RestaurantCopilot.Application.Abstractions.Persistence;
+using RestaurantCopilot.Application.Abstractions.Search;
 using RestaurantCopilot.Domain.MenuItems;
+using RestaurantCopilot.Infrastructure.Search;
 
 namespace RestaurantCopilot.Infrastructure.Persistence.Repositories;
 
@@ -32,4 +34,11 @@ internal sealed class MenuItemRepository(ApplicationDbContext dbContext) : IMenu
 
     public Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken) =>
         dbContext.MenuItems.AnyAsync(item => item.Id == id, cancellationToken);
+
+    public async Task<IReadOnlyList<MenuItem>> ListNotIndexedAsync(CancellationToken cancellationToken) =>
+        await dbContext.MenuItems
+            .AsNoTracking()
+            .Where(item => !dbContext.Set<SearchDocument>()
+                .Any(document => document.Source == DocumentSource.MenuItem && document.SourceId == item.Id))
+            .ToListAsync(cancellationToken);
 }

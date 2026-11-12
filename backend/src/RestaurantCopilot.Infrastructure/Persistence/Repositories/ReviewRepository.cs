@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using RestaurantCopilot.Application.Abstractions.Persistence;
+using RestaurantCopilot.Application.Abstractions.Search;
 using RestaurantCopilot.Domain.Reviews;
+using RestaurantCopilot.Infrastructure.Search;
 
 namespace RestaurantCopilot.Infrastructure.Persistence.Repositories;
 
@@ -86,17 +88,27 @@ internal sealed class ReviewRepository(ApplicationDbContext dbContext) : IReview
         return (rows, total);
     }
 
-    public async Task<IReadOnlyList<ReviewDocumentRow>> ListForIndexingAsync(CancellationToken cancellationToken) =>
-        await dbContext.Reviews
+    public async Task<IReadOnlyList<ReviewDocumentRow>> ListNotIndexedAsync(int limit, CancellationToken cancellationToken) =>
+        await ProjectForIndexing(dbContext.Reviews
             .AsNoTracking()
+            .Where(review => !dbContext.Set<SearchDocument>()
+                .Any(document => document.Source == DocumentSource.Review && document.SourceId == review.Id))
             .OrderBy(review => review.CreatedAt)
+            .Take(limit))
+            .ToListAsync(cancellationToken);
+
+    public async Task<IReadOnlyList<ReviewDocumentRow>> ListForIndexingAsync(CancellationToken cancellationToken) =>
+        await ProjectForIndexing(dbContext.Reviews.AsNoTracking().OrderBy(review => review.CreatedAt))
+            .ToListAsync(cancellationToken);
+
+    private IQueryable<ReviewDocumentRow> ProjectForIndexing(IQueryable<Review> reviews) =>
+        reviews
             .Select(review => new ReviewDocumentRow(
                 review.Id,
                 review.Rating.Value,
                 review.Comment,
                 review.CreatedAt,
-                dbContext.MenuItems.Where(item => item.Id == review.MenuItemId).Select(item => item.Name).FirstOrDefault()))
-            .ToListAsync(cancellationToken);
+                dbContext.MenuItems.Where(item => item.Id == review.MenuItemId).Select(item => item.Name).FirstOrDefault()));
 
     public async Task<IReadOnlyList<ReviewInsightRow>> ListForInsightsAsync(
         DateTimeOffset startUtc,

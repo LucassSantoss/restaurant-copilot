@@ -1,4 +1,5 @@
 using RestaurantCopilot.Application.Abstractions.Search;
+using RestaurantCopilot.Infrastructure.Persistence.Repositories;
 using RestaurantCopilot.Infrastructure.Search;
 using RestaurantCopilot.Infrastructure.Tests.Persistence;
 
@@ -51,6 +52,46 @@ public sealed class PgvectorVectorStoreTests(PostgresFixture fixture)
         var results = await store.SearchAsync(Vector((0, 1f)), limit: 5, source: null, TestContext.Current.CancellationToken);
 
         results.ShouldHaveSingleItem().Content.ShouldBe("Novo.");
+    }
+
+    [Fact]
+    public async Task UpsertAsync_ReplacesTheDocumentOfTheSameSourceAndKeepsOthers()
+    {
+        await using var dbContext = fixture.CreateDbContext();
+        var store = new PgvectorVectorStore(dbContext, TimeProvider.System);
+        var kept = Document(DocumentSource.Review, "Outra avaliação.", axis: 1);
+        var original = Document(DocumentSource.Review, "Versão antiga.", axis: 0);
+        await store.ReplaceAllAsync([kept, original], TestContext.Current.CancellationToken);
+
+        await store.UpsertAsync([original with { Content = "Versão nova." }], TestContext.Current.CancellationToken);
+        var results = await store.SearchAsync(Vector((0, 1f), (1, 1f)), limit: 5, source: null, TestContext.Current.CancellationToken);
+
+        results.Select(result => result.Content).ShouldBe(["Versão nova.", "Outra avaliação."], ignoreOrder: true);
+    }
+
+    [Fact]
+    public async Task NotIndexedQueries_ReturnOnlyItemsWithoutSearchDocument()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        await using var dbContext = fixture.CreateDbContext();
+        var reviews = new ReviewRepository(dbContext);
+        var menu = new MenuItemRepository(dbContext);
+        var allReviews = await reviews.ListForIndexingAsync(cancellationToken);
+        var anyMenuItem = (await menu.ListAsync(null, false, cancellationToken))[0];
+        await new PgvectorVectorStore(dbContext, TimeProvider.System).ReplaceAllAsync(
+            [
+                new VectorDocument(DocumentSource.Review, allReviews[0].Id, "x", Vector((0, 1f))),
+                new VectorDocument(DocumentSource.MenuItem, anyMenuItem.Id, "y", Vector((0, 1f))),
+            ],
+            cancellationToken);
+
+        var pendingReviews = await reviews.ListNotIndexedAsync(limit: 1000, cancellationToken);
+        var pendingMenu = await menu.ListNotIndexedAsync(cancellationToken);
+
+        pendingReviews.Count.ShouldBe(allReviews.Count - 1);
+        pendingReviews.ShouldNotContain(review => review.Id == allReviews[0].Id);
+        pendingMenu.Count.ShouldBe(23);
+        pendingMenu.ShouldNotContain(item => item.Id == anyMenuItem.Id);
     }
 
     private static VectorDocument Document(DocumentSource source, string content, int axis) =>

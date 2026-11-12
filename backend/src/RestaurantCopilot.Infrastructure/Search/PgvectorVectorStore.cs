@@ -17,20 +17,38 @@ internal sealed class PgvectorVectorStore(ApplicationDbContext dbContext, TimePr
 
         await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
         await dbContext.Set<SearchDocument>().ExecuteDeleteAsync(cancellationToken);
-        dbContext.Set<SearchDocument>().AddRange(documents.Select(document => new SearchDocument
-        {
-            Id = Guid.CreateVersion7(),
-            Source = document.Source,
-            SourceId = document.SourceId,
-            Content = document.Content,
-            Embedding = new Vector(document.Embedding),
-            IndexedAt = indexedAt,
-        }));
+        dbContext.Set<SearchDocument>().AddRange(documents.Select(document => ToEntity(document, indexedAt)));
         await dbContext.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
 
         dbContext.ChangeTracker.Clear();
     }
+
+    public async Task UpsertAsync(IReadOnlyList<VectorDocument> documents, CancellationToken cancellationToken)
+    {
+        var indexedAt = timeProvider.GetUtcNow();
+        var keys = documents.Select(document => document.SourceId).ToList();
+
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+        await dbContext.Set<SearchDocument>()
+            .Where(document => keys.Contains(document.SourceId))
+            .ExecuteDeleteAsync(cancellationToken);
+        dbContext.Set<SearchDocument>().AddRange(documents.Select(document => ToEntity(document, indexedAt)));
+        await dbContext.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+
+        dbContext.ChangeTracker.Clear();
+    }
+
+    private static SearchDocument ToEntity(VectorDocument document, DateTimeOffset indexedAt) => new()
+    {
+        Id = Guid.CreateVersion7(),
+        Source = document.Source,
+        SourceId = document.SourceId,
+        Content = document.Content,
+        Embedding = new Vector(document.Embedding),
+        IndexedAt = indexedAt,
+    };
 
     public async Task<IReadOnlyList<VectorSearchResult>> SearchAsync(
         float[] queryVector,

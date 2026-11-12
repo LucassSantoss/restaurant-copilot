@@ -36,6 +36,9 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
         // Tests never call the real Gemini API, even if a key exists in user-secrets.
         builder.UseSetting("Gemini:ApiKey", "");
+
+        // The background worker is enabled only by the tests about it, so it cannot interfere with others.
+        builder.UseSetting("ReviewProcessing:Enabled", "false");
     }
 
     private static string FindRepositoryRoot()

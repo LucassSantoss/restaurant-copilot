@@ -1,11 +1,13 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using RestaurantCopilot.Application.Abstractions.Background;
 using RestaurantCopilot.Application.Abstractions.Caching;
 using RestaurantCopilot.Application.Abstractions.Persistence;
 using RestaurantCopilot.Application.Abstractions.Search;
 using RestaurantCopilot.Application.Abstractions.Sql;
 using RestaurantCopilot.Infrastructure.Ai.Gemini;
+using RestaurantCopilot.Infrastructure.Background;
 using RestaurantCopilot.Infrastructure.Caching;
 using RestaurantCopilot.Infrastructure.Persistence;
 using RestaurantCopilot.Infrastructure.Persistence.Repositories;
@@ -26,6 +28,7 @@ public static class DependencyInjection
         services.AddGemini(configuration);
         services.AddTextToSql(configuration);
         services.AddCaching(redisConnectionString);
+        services.AddReviewProcessing(configuration);
 
         services.AddHealthChecks()
             .AddNpgSql(postgresConnectionString, name: "postgres")
@@ -48,6 +51,19 @@ public static class DependencyInjection
         services.AddScoped<IReviewRepository, ReviewRepository>();
         services.AddScoped<ISalesRepository, SalesRepository>();
         services.AddScoped<IVectorStore, PgvectorVectorStore>();
+    }
+
+    private static void AddReviewProcessing(this IServiceCollection services, IConfiguration configuration)
+    {
+        var section = configuration.GetSection(ReviewProcessingOptions.SectionName);
+        services.AddOptions<ReviewProcessingOptions>().Bind(section);
+        services.AddSingleton<ReviewProcessingTrigger>();
+        services.AddSingleton<IReviewProcessingTrigger>(provider => provider.GetRequiredService<ReviewProcessingTrigger>());
+
+        if (section.GetValue(nameof(ReviewProcessingOptions.Enabled), defaultValue: true))
+        {
+            services.AddHostedService<ReviewProcessingWorker>();
+        }
     }
 
     private static void AddCaching(this IServiceCollection services, string redisConnectionString)
