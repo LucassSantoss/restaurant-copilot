@@ -312,7 +312,10 @@ O agente é avaliado com **26 perguntas** sobre os dados do seed: vendas, texto 
 
 A avaliação **não roda automaticamente** (gasta cota real do LLM). Por padrão, `dotnet run --project backend/tools/RestaurantCopilot.Evaluation` executa a suíte rápida **`smoke`** (4 perguntas, ~8 chamadas), que cabe na cota gratuita diária do Gemini; `--suite full` roda as 26.
 
-> ⏳ **Resultado completo pendente:** a cota gratuita (20 requisições/dia) não comporta a rodada completa num único dia. O resultado será registrado aqui e em [`evaluation/results/latest.md`](evaluation/results/latest.md).
+| Suíte | Resultado |
+|---|---|
+| `smoke` (4 perguntas: vendas, texto para SQL, avaliações) | **4/4 corretas**: 3/4 na primeira execução (uma pergunta estourou o tempo limite por lentidão do Gemini) e 1/1 ao repetir ([detalhes](docs/evaluation.md#resultados)) |
+| `full` (26 perguntas) | pendente: precisa ser dividida em vários dias por causa da cota gratuita |
 
 ## Decisões técnicas e trade-offs
 

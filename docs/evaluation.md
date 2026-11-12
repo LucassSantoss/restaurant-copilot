@@ -51,4 +51,18 @@ O relatório é gravado em [`evaluation/results/latest.md`](../evaluation/result
 
 ## Resultados
 
-> ⏳ **Ainda não concluída.** Na primeira execução com `gemini-3.5-flash`, as 4 perguntas que receberam resposta (`sales-01`, `02`, `03` e `05`) acertaram; as demais esbarraram na cota gratuita do modelo (20 requisições por dia), já parcialmente consumida pelos testes manuais. A rodada completa precisa de ~90 chamadas (agente + juiz); com o plano gratuito, use a suíte `smoke` no dia a dia e divida a `full` em vários dias com `--only`. O resumo será registrado aqui e no README, e o relatório completo ficará em `evaluation/results/latest.md`.
+### Suíte `smoke` — 12/11/2026, `gemini-3.5-flash`
+
+| Pergunta | O que testa | Resultado |
+|---|---|---|
+| `sales-01` faturamento de outubro | `search_sales` | ✅ R$ 55.284,70 |
+| `sales-05` cancelados em agosto | `search_sales` | ✅ 15 |
+| `sql-01` hora com mais pedidos | `query_database` (texto para SQL) | ✅ 21h |
+| `reviews-03` notas 1–2 em setembro | `list_reviews` | ❌ na 1ª execução (timeout); ✅ 19 ao repetir |
+
+- **Primeira execução: 3/4.** A pergunta `reviews-03` não chegou a ser respondida: uma chamada ao Gemini ficou mais de 60 s sem resposta e foi repetida pelo pipeline de resiliência, e o agente atingiu o limite total de 2 minutos. Não foi uma resposta errada, e sim lentidão do provedor somada ao limite por minuto do plano gratuito (`429`).
+- **Repetindo só essa pergunta: 1/1**, com o número exato.
+- **Todas as respostas obtidas estavam corretas (4/4)**, cada uma com a ferramenta esperada.
+- Relatórios: [`evaluation/results/latest.md`](../evaluation/results/latest.md) (execução completa da suíte) e [`evaluation/results/reviews-03-retry.md`](../evaluation/results/reviews-03-retry.md) (repetição).
+
+> A suíte `full` (26 perguntas, ~90 chamadas) ainda não foi executada: com a cota gratuita, ela deve ser dividida em vários dias com `--only`.
