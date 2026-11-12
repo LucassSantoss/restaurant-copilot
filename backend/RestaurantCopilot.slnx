@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RestaurantCopilot.Api/RestaurantCopilot.Api.csproj" />
+    <Project Path="src/RestaurantCopilot.Application/RestaurantCopilot.Application.csproj" />
+    <Project Path="src/RestaurantCopilot.Domain/RestaurantCopilot.Domain.csproj" />
+    <Project Path="src/RestaurantCopilot.Infrastructure/RestaurantCopilot.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RestaurantCopilot.Api.Tests/RestaurantCopilot.Api.Tests.csproj" />
+  </Folder>
+</Solution>
