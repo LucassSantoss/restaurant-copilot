@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: backend
+
+jobs:
+  build-and-test:
+    name: Build, lint and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: backend/global.json
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Lint (formatting and code style)
+        run: dotnet format --verify-no-changes --no-restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      # Integration tests use Testcontainers; the hosted runner provides Docker.
+      - name: Test
+        run: dotnet test --configuration Release --no-build
+
+  docker-image:
+    name: Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build API image
+        run: docker build --tag restaurant-copilot-api:ci .
