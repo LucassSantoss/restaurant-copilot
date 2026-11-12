@@ -170,10 +170,10 @@ GET /api/reviews/insights?from=2026-10-01&to=2026-10-31
 {
   "from": "2026-10-01",
   "to": "2026-10-31",
-  "totalReviews": 71,
-  "classifiedReviews": 71,
-  "averageRating": 3.42,
-  "sentiment": { "positive": 33, "neutral": 9, "negative": 29 },
+  "totalReviews": 65,
+  "classifiedReviews": 65,
+  "averageRating": 3.62,
+  "sentiment": { "positive": 34, "neutral": 8, "negative": 23 },
   "themes": [
     { "theme": "Taste", "mentions": 30, "negative": 7 },
     { "theme": "Packaging", "mentions": 15, "negative": 13 }
@@ -184,7 +184,7 @@ GET /api/reviews/insights?from=2026-10-01&to=2026-10-31
 }
 ```
 
-> Os números acima ilustram o formato; os valores reais dependem da classificação feita pelo modelo.
+> Total e média vêm do seed; sentimento, temas e pratos dependem da classificação feita pelo modelo.
 
 ```http
 GET /health
