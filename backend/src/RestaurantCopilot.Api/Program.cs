@@ -54,6 +54,7 @@ try
     app.MapMenuEndpoints();
     app.MapReviewEndpoints();
     app.MapIngestionEndpoints();
+    app.MapSearchEndpoints();
 
     app.MapHealthChecks("/health", new HealthCheckOptions
     {
