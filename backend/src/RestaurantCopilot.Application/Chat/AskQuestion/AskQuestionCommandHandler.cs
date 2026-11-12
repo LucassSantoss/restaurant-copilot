@@ -24,7 +24,7 @@ internal sealed class AskQuestionCommandHandler(
         var question = command.Question.Trim();
         var today = ReportingPeriod.Today(restaurant, timeProvider);
 
-        if (await cache.GetAsync(question, today, cancellationToken) is { } cached)
+        if (!command.BypassCache && await cache.GetAsync(question, today, cancellationToken) is { } cached)
         {
             return cached with { Cached = true };
         }

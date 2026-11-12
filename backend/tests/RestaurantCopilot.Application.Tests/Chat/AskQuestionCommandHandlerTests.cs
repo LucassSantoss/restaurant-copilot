@@ -48,6 +48,20 @@ public sealed class AskQuestionCommandHandlerTests
     }
 
     [Fact]
+    public async Task HandleAsync_WhenBypassingCache_RunsAgentEvenIfCached()
+    {
+        _cache.GetAsync(Arg.Any<string>(), Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
+            .Returns(new ChatResponse("velho", [], [], new ChatUsage(0, 0)));
+        _orchestrator.AnswerAsync("Quanto vendi?", Arg.Any<CancellationToken>())
+            .Returns(new AgentAnswer("novo", [], [], new LlmUsage(10, 5)));
+
+        var result = await _handler.HandleAsync(new AskQuestionCommand("Quanto vendi?", BypassCache: true), TestContext.Current.CancellationToken);
+
+        result.Value.Answer.ShouldBe("novo");
+        await _cache.Received(1).SetAsync("Quanto vendi?", Today, result.Value, Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
     public async Task HandleAsync_WhenAgentFails_DoesNotCacheTheError()
     {
         _orchestrator.AnswerAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
