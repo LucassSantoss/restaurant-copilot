@@ -6,7 +6,7 @@ using RestaurantCopilot.Infrastructure.Ai.Gemini;
 
 namespace RestaurantCopilot.Infrastructure.Tests.Ai;
 
-public sealed class GeminiClientTests
+public sealed class GeminiClientTests : IDisposable
 {
     private static readonly JsonElement SalesToolSchema = JsonDocument.Parse("""
         { "type": "object", "properties": { "period": { "type": "string" } }, "required": ["period"] }
@@ -137,4 +137,6 @@ public sealed class GeminiClientTests
         new(GeminiTestData.CreateHttpClient(_handler), GeminiTestData.Wrap(GeminiTestData.Options), NullLogger<GeminiClient>.Instance);
 
     private static LlmRequest SimpleRequest() => new(null, [new UserMessage("Quanto vendi?")]);
+
+    public void Dispose() => _handler.Dispose();
 }

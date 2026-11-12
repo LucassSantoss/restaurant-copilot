@@ -7,7 +7,7 @@ using RestaurantCopilot.Infrastructure.Ai.Gemini;
 namespace RestaurantCopilot.Infrastructure.Tests.Ai;
 
 /// <summary>Exercises the real DI registration, including the resilience pipeline.</summary>
-public sealed class GeminiResilienceTests
+public sealed class GeminiResilienceTests : IDisposable
 {
     private readonly FakeHttpMessageHandler _handler = new();
 
@@ -59,4 +59,6 @@ public sealed class GeminiResilienceTests
 
         return services.BuildServiceProvider().GetRequiredService<ILlmClient>();
     }
+
+    public void Dispose() => _handler.Dispose();
 }

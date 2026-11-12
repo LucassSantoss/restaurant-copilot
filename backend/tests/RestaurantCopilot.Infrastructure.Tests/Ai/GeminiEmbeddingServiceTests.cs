@@ -6,7 +6,7 @@ using RestaurantCopilot.Infrastructure.Ai.Gemini;
 
 namespace RestaurantCopilot.Infrastructure.Tests.Ai;
 
-public sealed class GeminiEmbeddingServiceTests
+public sealed class GeminiEmbeddingServiceTests : IDisposable
 {
     private readonly FakeHttpMessageHandler _handler = new();
 
@@ -51,4 +51,6 @@ public sealed class GeminiEmbeddingServiceTests
         {
             embeddings = Enumerable.Range(startAt, count).Select(i => new { values = new float[] { i, 0, 0 } }),
         });
+
+    public void Dispose() => _handler.Dispose();
 }

@@ -76,9 +76,8 @@ public sealed class AgentOrchestratorTests
         result.Value.Answer.ShouldBe("Não consigo fazer isso.");
         var step = result.Value.Steps.ShouldHaveSingleItem();
         step.Succeeded.ShouldBeFalse();
-        step.Error.ShouldNotBeNull();
-        step.Error.ShouldContain("search_sales");
-        llm.Requests[1].Messages[2].ShouldBeOfType<ToolResultMessage>().Result.GetProperty("error").GetString().ShouldContain("delete_everything");
+        step.Error.ShouldNotBeNull().ShouldContain("search_sales");
+        llm.Requests[1].Messages[2].ShouldBeOfType<ToolResultMessage>().Result.GetProperty("error").GetString().ShouldNotBeNull().ShouldContain("delete_everything");
     }
 
     [Fact]
