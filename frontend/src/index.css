@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+
+  --color-ink-950: #0d0b0a;
+  --color-ink-900: #15120f;
+  --color-ink-800: #1d1915;
+  --color-ink-700: #2a241e;
+  --color-ink-600: #3a322a;
+  --color-cream-50: #fbf6ef;
+  --color-cream-200: #e9dfd2;
+  --color-cream-400: #b9ab9a;
+  --color-cream-500: #8f8273;
+  --color-tomato-400: #f2784b;
+  --color-tomato-500: #e85d2c;
+  --color-saffron-300: #f6c66b;
+  --color-basil-400: #7cc68a;
+  --color-basil-500: #4fae63;
+
+  --animate-drift: drift 22s ease-in-out infinite alternate;
+  --animate-shimmer: shimmer 2.2s linear infinite;
+}
+
+@keyframes drift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(6%, -4%, 0) scale(1.12); }
+  100% { transform: translate3d(-5%, 5%, 0) scale(0.95); }
+}
+
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-ink-950);
+  color: var(--color-cream-50);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-tomato-500) 45%, transparent);
+}
+
+/* Thin, warm scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink-600) transparent;
+}
+
+.text-shimmer {
+  background: linear-gradient(90deg, var(--color-cream-500) 20%, var(--color-cream-50) 50%, var(--color-cream-500) 80%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: var(--animate-shimmer);
+}
+
+/* Markdown answers from the agent */
+.markdown {
+  line-height: 1.7;
+  color: var(--color-cream-200);
+}
+.markdown > * + * { margin-top: 0.85rem; }
+.markdown strong { color: var(--color-cream-50); font-weight: 600; }
+.markdown h1, .markdown h2, .markdown h3 {
+  font-family: var(--font-display);
+  color: var(--color-cream-50);
+  font-weight: 600;
+  margin-top: 1.4rem;
+}
+.markdown h3 { font-size: 1.05rem; }
+.markdown h2 { font-size: 1.2rem; }
+.markdown ul, .markdown ol { padding-left: 1.25rem; }
+.markdown ul { list-style: disc; }
+.markdown ol { list-style: decimal; }
+.markdown li + li { margin-top: 0.3rem; }
+.markdown li::marker { color: var(--color-tomato-400); }
+.markdown hr { border-color: var(--color-ink-600); margin: 1.25rem 0; }
+.markdown code {
+  font-size: 0.85em;
+  background: var(--color-ink-700);
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.35rem;
+}
+.markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  display: block;
+  overflow-x: auto;
+}
+.markdown th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-cream-50);
+  background: var(--color-ink-700);
+  padding: 0.55rem 0.8rem;
+  white-space: nowrap;
+}
+.markdown td {
+  padding: 0.5rem 0.8rem;
+  border-top: 1px solid var(--color-ink-600);
+  white-space: nowrap;
+}
+.markdown tr:nth-child(even) td { background: color-mix(in oklab, var(--color-ink-700) 40%, transparent); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
