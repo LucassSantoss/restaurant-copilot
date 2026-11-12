@@ -8,7 +8,7 @@
 
 > **English summary:** RestaurantCopilot is an ASP.NET Core (.NET 10) API where restaurant owners ask natural-language questions about their business. An AI agent built on Google Gemini uses function calling, RAG over PostgreSQL + pgvector and guarded text-to-SQL to answer from real data, citing its sources. The codebase follows Clean Architecture, is covered by unit and Testcontainers-based integration tests, and runs locally with a single `docker compose up`.
 
-> 🚧 **Status:** em desenvolvimento. A fundação (Fase 1) está pronta; as próximas fases estão no [roadmap](#próximos-passos).
+> 🚧 **Status:** em desenvolvimento. Fundação e camada de dados prontas; as próximas fases estão no [roadmap](#próximos-passos).
 
 <!-- Demonstração (GIF ou print) será adicionada quando o endpoint /api/chat estiver pronto. -->
 
@@ -29,6 +29,8 @@ O RestaurantCopilot transforma essas perguntas em consultas aos dados reais e de
 | Agente com ferramentas | O LLM decide quando consultar vendas, avaliações ou fazer busca semântica | Planejado (Fase 6) |
 | Texto para SQL | Perguntas analíticas viram SQL **somente leitura** e validado | Planejado (Fase 7) |
 | Cache de respostas | Redis para reduzir latência e consumo da cota gratuita | Planejado (Fase 8) |
+| Cardápio | `GET /api/menu` com filtros por categoria e disponibilidade | ✅ Pronto |
+| Dados fictícios | 14 semanas de pedidos e avaliações de um restaurante fictício, carregados automaticamente | ✅ Pronto |
 | Health check | `/health` com o estado do PostgreSQL e do Redis | ✅ Pronto |
 
 ## Arquitetura
@@ -64,6 +66,7 @@ Essa regra não é só convenção: **testes de arquitetura** (`NetArchTest`) qu
 ├── docs/
 │   ├── adr/                        # Architecture Decision Records
 │   └── diagrams/                   # diagramas Mermaid
+├── seed/                           # gerador e dados fictícios (JSON)
 ├── docker-compose.yml              # API + PostgreSQL (pgvector) + Redis
 └── .github/workflows/ci.yml
 ```
@@ -75,6 +78,8 @@ Essa regra não é só convenção: **testes de arquitetura** (`NetArchTest`) qu
 | API | .NET 10 (LTS), ASP.NET Core | Suporte de longo prazo, performance e tipagem forte |
 | Arquitetura | Clean Architecture | Isola regras de negócio de provedores que mudam ([ADR 0001](docs/adr/0001-clean-architecture.md)) |
 | Banco | PostgreSQL 18 + pgvector | Dados relacionais e vetoriais no mesmo banco, sem um serviço extra |
+| ORM | EF Core 10 + Npgsql, convenção snake_case | Migrations versionadas; nomes no padrão do PostgreSQL, legíveis também para o SQL gerado pelo LLM |
+| Casos de uso | Handlers próprios (CQRS leve) + Scrutor | Sem dependência com licença comercial ([ADR 0002](docs/adr/0002-own-cqrs-handlers.md)) |
 | Cache | Redis 8 | Cache de respostas do agente |
 | Logs | Serilog | Logs estruturados configuráveis por `appsettings` |
 | Documentação da API | OpenAPI + Scalar | Documento OpenAPI nativo do .NET com uma UI moderna |
@@ -89,7 +94,10 @@ Essa regra não é só convenção: **testes de arquitetura** (`NetArchTest`) qu
 cp .env.example .env          # ajuste os valores se quiser
 docker compose up -d --build
 curl http://localhost:8080/health
+curl http://localhost:8080/api/menu
 ```
+
+Na primeira subida, a API aplica as migrations e carrega os dados fictícios de [`seed/`](seed/) (só em banco vazio). Para recriar do zero: `docker compose down -v`.
 
 A chave do Gemini (`GEMINI_API_KEY` no `.env`) será necessária a partir das funcionalidades de IA. Ela pode ser gerada gratuitamente no [Google AI Studio](https://aistudio.google.com/apikey).
 
@@ -105,6 +113,25 @@ dotnet run --project backend/src/RestaurantCopilot.Api
 - OpenAPI: http://localhost:5080/openapi/v1.json
 
 ## Exemplos de requisições
+
+```http
+GET /api/menu?category=Dessert
+```
+
+```json
+[
+  {
+    "id": "01a1cd1d-f94b-7901-9967-a09832d37846",
+    "name": "Cannoli Siciliano",
+    "description": "Massa crocante recheada com ricota doce (2 unidades).",
+    "category": "Dessert",
+    "price": 26.90,
+    "isAvailable": true
+  }
+]
+```
+
+Categorias: `Starter`, `Pizza`, `Pasta`, `Risotto`, `MainCourse`, `Dessert`, `Drink`. Uma categoria desconhecida retorna `400` com um corpo [Problem Details](https://www.rfc-editor.org/rfc/rfc9457).
 
 ```http
 GET /health
@@ -134,7 +161,10 @@ Os testes rodam na **Microsoft.Testing.Platform** com xUnit v3. Os testes de int
 
 | Projeto | Cobre |
 |---|---|
-| `RestaurantCopilot.Api.Tests` | Regras de dependência entre camadas e endpoints de ponta a ponta (ex.: `/health` saudável e com Redis fora do ar) |
+| `RestaurantCopilot.Domain.Tests` | Invariantes das entidades e value objects (`Money`, `Rating`, `Order`, `Review`...) |
+| `RestaurantCopilot.Application.Tests` | Casos de uso com dublês (NSubstitute) |
+| `RestaurantCopilot.Infrastructure.Tests` | Repositórios, mapeamentos do EF Core e seed contra PostgreSQL real |
+| `RestaurantCopilot.Api.Tests` | Regras de dependência entre camadas e endpoints de ponta a ponta (ex.: `/api/menu`, `/health` com Redis fora do ar) |
 
 O [workflow de CI](.github/workflows/ci.yml) roda em todo push na `main` e em pull requests: restore, `dotnet format --verify-no-changes`, build em Release com warnings tratados como erros, testes e build da imagem Docker.
 
@@ -147,13 +177,16 @@ Planejado (Fase 9): um conjunto de perguntas com respostas esperadas sobre os da
 - **Warnings como erros e analyzers no nível `latest-recommended`** nos projetos de produção: o build falha antes de o problema chegar ao code review.
 - **Versões de pacotes centralizadas** em `Directory.Packages.props`: uma única fonte de verdade para dependências.
 - **Imagem Docker sem root:** a API roda com o usuário `app` da imagem oficial da Microsoft.
+- **Erros de negócio como valores:** factories e casos de uso retornam `Result<T>`; a API traduz o tipo do erro em status HTTP (400/404/409) com Problem Details. Exceções ficam para o que é realmente excepcional.
+- **Seed determinístico e versionado** ([ADR 0003](docs/adr/0003-deterministic-seed-data.md)): os mesmos dados alimentam demo, testes e avaliação do agente, e todo registro passa pelas regras do domínio.
+- **Enums gravados como texto** no banco (`'Delivery'` em vez de `0`): consultas, inclusive as geradas pelo LLM, ficam legíveis sem tabela de-para.
 
 As decisões completas estão nos [ADRs](docs/adr/).
 
 ## Próximos passos
 
 1. ~~Fundação: solution, Docker Compose, CI, health check~~ ✅
-2. Domínio e dados: entidades, EF Core, migrations e seed fictício
+2. ~~Domínio e dados: entidades, EF Core, migrations e seed fictício~~ ✅
 3. Integração com o Gemini atrás de `ILlmClient`, com resiliência
 4. Análise de avaliações e endpoint de insights
 5. RAG com pgvector

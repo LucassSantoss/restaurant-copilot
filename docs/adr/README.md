@@ -5,6 +5,8 @@ Cada decisão técnica relevante do projeto é registrada aqui como um ADR curto
 | # | Decisão | Status |
 |---|---|---|
 | [0001](0001-clean-architecture.md) | Clean Architecture com quatro camadas | Aceito |
+| [0002](0002-own-cqrs-handlers.md) | CQRS leve com handlers próprios (sem MediatR) | Aceito |
+| [0003](0003-deterministic-seed-data.md) | Dados fictícios gerados de forma determinística | Aceito |
 
 ## Modelo
 
