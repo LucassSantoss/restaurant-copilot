@@ -131,7 +131,7 @@ Content-Type: application/json
 
 ```json
 {
-  "answer": "Na última semana (02/11 a 08/11/2026) você faturou R$ 7.712,10 em 127 pedidos, contra R$ 6.640,80 na semana anterior (26/10 a 01/11): alta de 16,1%. ...",
+  "answer": "Na última semana (02/11 a 08/11/2026) você faturou R$ 13.891,90 em 122 pedidos, contra R$ 11.971,00 em 100 pedidos na semana anterior (26/10 a 01/11): alta de 16,0%. ...",
   "sources": [
     { "kind": "tool", "reference": "search_sales", "description": "Vendas de 02/11/2026 a 08/11/2026" },
     { "kind": "tool", "reference": "search_sales", "description": "Vendas de 26/10/2026 a 01/11/2026" }
@@ -144,7 +144,7 @@ Content-Type: application/json
 }
 ```
 
-> Exemplo ilustrativo do formato; o texto e os números exatos dependem do modelo e dos dados.
+> Os números são os do seed; a redação da resposta varia conforme o modelo.
 
 ```http
 GET /api/menu?category=Dessert
