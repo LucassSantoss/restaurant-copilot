@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using System.Threading.RateLimiting;
 using Microsoft.Extensions.Logging.Abstractions;
 using RestaurantCopilot.Application.Abstractions.Ai;
 using RestaurantCopilot.Infrastructure.Ai.Gemini;
@@ -42,8 +43,47 @@ public sealed class GeminiEmbeddingServiceTests : IDisposable
         result.Error.Code.ShouldBe("Llm.InvalidResponse");
     }
 
-    private GeminiEmbeddingService CreateService() =>
-        new(GeminiTestData.CreateHttpClient(_handler), GeminiTestData.Wrap(GeminiTestData.Options), NullLogger<GeminiEmbeddingService>.Instance);
+    [Fact]
+    public async Task EmbedAsync_KeepsBatchesWithinThePerMinuteQuota()
+    {
+        _handler
+            .RespondWith(HttpStatusCode.OK, EmbeddingsResponse(2, startAt: 0))
+            .RespondWith(HttpStatusCode.OK, EmbeddingsResponse(1, startAt: 2));
+        var options = GeminiTestData.Options;
+        var service = CreateService(new GeminiOptions
+        {
+            ApiKey = options.ApiKey,
+            EmbeddingModel = options.EmbeddingModel,
+            EmbeddingDimensions = options.EmbeddingDimensions,
+            EmbeddingRequestsPerMinute = 2,
+        });
+
+        var result = await service.EmbedAsync(["a", "b", "c"], EmbeddingPurpose.Document, TestContext.Current.CancellationToken);
+
+        result.Value.Count.ShouldBe(3);
+        _handler.Requests.Count.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task RateLimiter_DelaysTextsBeyondTheQuota()
+    {
+        await using var limiter = new GeminiEmbeddingRateLimiter(GeminiTestData.Wrap(new GeminiOptions { EmbeddingRequestsPerMinute = 2 }));
+
+        using var first = await limiter.AcquireAsync(2, TestContext.Current.CancellationToken);
+        var second = limiter.AcquireAsync(1, TestContext.Current.CancellationToken).AsTask();
+        await Task.Delay(100, TestContext.Current.CancellationToken);
+
+        first.IsAcquired.ShouldBeTrue();
+        second.IsCompleted.ShouldBeFalse();
+    }
+
+    // The limiter is permissive here; quota pacing has its own test.
+    private GeminiEmbeddingService CreateService(GeminiOptions? options = null) =>
+        new(
+            GeminiTestData.CreateHttpClient(_handler),
+            GeminiTestData.Wrap(options ?? GeminiTestData.Options),
+            new GeminiEmbeddingRateLimiter(new ConcurrencyLimiter(new ConcurrencyLimiterOptions { PermitLimit = int.MaxValue, QueueLimit = 0 })),
+            NullLogger<GeminiEmbeddingService>.Instance);
 
     // Each vector starts with its global index, so the test can check ordering across batches.
     private static string EmbeddingsResponse(int count, int startAt) =>

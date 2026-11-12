@@ -18,6 +18,7 @@ public static class GeminiServiceCollectionExtensions
 
         services.AddHttpClient<ILlmClient, GeminiClient>(ConfigureClient).AddGeminiResilience();
         services.AddHttpClient<IEmbeddingService, GeminiEmbeddingService>(ConfigureClient).AddGeminiResilience();
+        services.AddSingleton<GeminiEmbeddingRateLimiter>();
 
         // The health check gets a plain client with a short timeout: no retries, it should fail fast.
         services.AddHttpClient<GeminiHealthCheck>((provider, client) =>

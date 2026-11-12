@@ -17,7 +17,7 @@ public sealed class GeminiOptions
     public Uri BaseUrl { get; init; } = new("https://generativelanguage.googleapis.com/v1beta/");
 
     [Required]
-    public string GenerationModel { get; init; } = "gemini-2.5-flash";
+    public string GenerationModel { get; init; } = "gemini-3.5-flash";
 
     [Required]
     public string EmbeddingModel { get; init; } = "gemini-embedding-001";
@@ -25,6 +25,13 @@ public sealed class GeminiOptions
     /// <summary>Output size requested from the embedding model (it supports truncated vectors).</summary>
     [Range(128, 3072)]
     public int EmbeddingDimensions { get; init; } = 768;
+
+    /// <summary>
+    /// Texts the embedding model may embed per minute. The free tier counts every text of a batch
+    /// as one request (100 per minute), so the client paces itself instead of hitting 429s.
+    /// </summary>
+    [Range(1, 100000)]
+    public int EmbeddingRequestsPerMinute { get; init; } = 100;
 
     /// <summary>Retries for transient failures (429 and 5xx), with exponential backoff and jitter.</summary>
     [Range(0, 10)]

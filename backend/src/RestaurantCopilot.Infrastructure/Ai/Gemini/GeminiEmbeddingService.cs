@@ -9,6 +9,7 @@ namespace RestaurantCopilot.Infrastructure.Ai.Gemini;
 internal sealed class GeminiEmbeddingService(
     HttpClient httpClient,
     IOptions<GeminiOptions> options,
+    GeminiEmbeddingRateLimiter rateLimiter,
     ILogger<GeminiEmbeddingService> logger) : IEmbeddingService
 {
     /// <summary>Maximum number of texts Gemini accepts in one batch request.</summary>
@@ -29,8 +30,10 @@ internal sealed class GeminiEmbeddingService(
         }
 
         var vectors = new List<float[]>(texts.Count);
-        foreach (var batch in texts.Chunk(MaxBatchSize))
+        var batchSize = Math.Min(MaxBatchSize, _options.EmbeddingRequestsPerMinute);
+        foreach (var batch in texts.Chunk(batchSize))
         {
+            using var lease = await rateLimiter.AcquireAsync(batch.Length, cancellationToken);
             var result = await EmbedBatchAsync(batch, purpose, cancellationToken);
             if (result.IsFailure)
             {
