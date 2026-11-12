@@ -47,6 +47,44 @@ public sealed class ChatEndpointTests(ApiFactory factory)
         toolResult.Value.GetProperty("completed_orders").GetInt32().ShouldBeGreaterThan(0);
     }
 
+    [Theory]
+    [InlineData("SELECT count(*) AS orders FROM orders WHERE status = 'Completed'", true)]
+    [InlineData("DELETE FROM orders", false)]
+    public async Task Post_TextToSqlRunsOnlyGuardedReadOnlyQueries(string sql, bool shouldSucceed)
+    {
+        JsonElement? toolResult = null;
+        var llm = Substitute.For<ILlmClient>();
+        llm.GenerateAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>()).Returns(
+            _ => Result.Success(new LlmResponse(
+                null,
+                [new LlmToolCall("query_database", JsonSerializer.SerializeToElement(new { sql, purpose = "Contar pedidos" }))],
+                LlmUsage.None)),
+            call =>
+            {
+                toolResult = call.Arg<LlmRequest>().Messages.OfType<ToolResultMessage>().Single().Result;
+                return Result.Success(new LlmResponse("Pronto.", [], LlmUsage.None));
+            });
+        await using var app = factory.WithWebHostBuilder(builder =>
+            builder.ConfigureTestServices(services => services.AddSingleton(llm)));
+        using var client = app.CreateClient();
+
+        var response = await client.PostAsJsonAsync("/api/chat", new { question = "Quantos pedidos tive?" }, TestContext.Current.CancellationToken);
+        var body = await response.Content.ReadFromJsonAsync<ChatBody>(TestContext.Current.CancellationToken);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        body.ShouldNotBeNull();
+        body.ToolCalls.ShouldHaveSingleItem().Succeeded.ShouldBe(shouldSucceed);
+        toolResult.ShouldNotBeNull();
+        if (shouldSucceed)
+        {
+            toolResult.Value.GetProperty("rows")[0][0].GetInt64().ShouldBeGreaterThan(1000);
+        }
+        else
+        {
+            toolResult.Value.GetProperty("error").GetString().ShouldNotBeNull().ShouldContain("DELETE");
+        }
+    }
+
     [Fact]
     public async Task Post_WithEmptyQuestion_ReturnsValidationProblem()
     {
