@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RestaurantCopilot.Application.Abstractions.Persistence;
+using RestaurantCopilot.Infrastructure.Ai.Gemini;
 using RestaurantCopilot.Infrastructure.Persistence;
 using RestaurantCopilot.Infrastructure.Persistence.Repositories;
 using RestaurantCopilot.Infrastructure.Persistence.Seeding;
@@ -15,10 +16,12 @@ public static class DependencyInjection
         var redisConnectionString = configuration.GetRequiredConnectionString(ConnectionStringNames.Redis);
 
         services.AddPersistence(configuration, postgresConnectionString);
+        services.AddGemini(configuration);
 
         services.AddHealthChecks()
             .AddNpgSql(postgresConnectionString, name: "postgres")
-            .AddRedis(redisConnectionString, name: "redis");
+            .AddRedis(redisConnectionString, name: "redis")
+            .AddGeminiHealthCheck();
 
         return services;
     }

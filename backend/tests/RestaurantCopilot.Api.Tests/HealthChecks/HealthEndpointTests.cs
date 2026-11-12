@@ -10,7 +10,7 @@ namespace RestaurantCopilot.Api.Tests.HealthChecks;
 public sealed class HealthEndpointTests(ApiFactory factory)
 {
     [Fact]
-    public async Task Get_WhenAllDependenciesAreUp_ReturnsHealthyWithEveryCheck()
+    public async Task Get_WhenDatabaseAndCacheAreUp_ReportsEveryCheck()
     {
         using var client = factory.CreateClient();
 
@@ -19,8 +19,23 @@ public sealed class HealthEndpointTests(ApiFactory factory)
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         body.ShouldNotBeNull();
-        body.Status.ShouldBe("Healthy");
-        body.Checks.Keys.ShouldBe(["postgres", "redis"], ignoreOrder: true);
+        body.Checks.Keys.ShouldBe(["postgres", "redis", "gemini"], ignoreOrder: true);
+        body.Checks["postgres"].Status.ShouldBe("Healthy");
+        body.Checks["redis"].Status.ShouldBe("Healthy");
+    }
+
+    [Fact]
+    public async Task Get_WithoutGeminiApiKey_IsDegradedButStillAvailable()
+    {
+        using var client = factory.CreateClient();
+
+        var response = await client.GetAsync("/health", TestContext.Current.CancellationToken);
+        var body = await response.Content.ReadFromJsonAsync<HealthBody>(TestContext.Current.CancellationToken);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        body.ShouldNotBeNull();
+        body.Status.ShouldBe("Degraded");
+        body.Checks["gemini"].Status.ShouldBe("Degraded");
     }
 
     [Fact]

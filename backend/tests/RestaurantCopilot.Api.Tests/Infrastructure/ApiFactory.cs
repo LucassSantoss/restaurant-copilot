@@ -21,6 +21,9 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
         builder.UseSetting("ConnectionStrings:Postgres", _postgres.GetConnectionString());
         builder.UseSetting("ConnectionStrings:Redis", _redis.GetConnectionString());
+
+        // Tests never call the real Gemini API, even if a key exists in user-secrets.
+        builder.UseSetting("Gemini:ApiKey", "");
     }
 
     public override async ValueTask DisposeAsync()

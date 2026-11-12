@@ -9,6 +9,7 @@ services:
       ConnectionStrings__Postgres: Host=postgres;Port=5432;Database=${POSTGRES_DB:-restaurant_copilot};Username=${POSTGRES_USER:-copilot};Password=${POSTGRES_PASSWORD:-copilot};Gss Encryption Mode=Disable
       ConnectionStrings__Redis: redis:6379
       Database__SeedPath: /seed
+      Gemini__ApiKey: ${GEMINI_API_KEY:-}
     volumes:
       - ./seed:/seed:ro
     ports:
