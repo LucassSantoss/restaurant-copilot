@@ -31,7 +31,8 @@ O RestaurantCopilot transforma essas perguntas em consultas aos dados reais e de
 | Cache de respostas | Redis para reduzir latência e consumo da cota gratuita | Planejado (Fase 8) |
 | Cardápio | `GET /api/menu` com filtros por categoria e disponibilidade | ✅ Pronto |
 | Dados fictícios | 14 semanas de pedidos e avaliações de um restaurante fictício, carregados automaticamente | ✅ Pronto |
-| Health check | `/health` com o estado do PostgreSQL e do Redis | ✅ Pronto |
+| Integração com LLM | Gemini atrás de `ILlmClient`/`IEmbeddingService`, com retry para `429` e timeouts | ✅ Pronto |
+| Health check | `/health` com o estado do PostgreSQL, do Redis e do Gemini | ✅ Pronto |
 
 ## Arquitetura
 
@@ -47,6 +48,8 @@ Api  →  Infrastructure  →  Application  →  Domain
 | `Application` | Casos de uso (commands/queries), DTOs e interfaces (ports) como `ILlmClient` e `IVectorStore` |
 | `Infrastructure` | Implementações: EF Core/PostgreSQL, pgvector, Redis, cliente Gemini |
 | `Api` | Endpoints, injeção de dependência, middlewares e configuração |
+
+**Troca de provedor de LLM:** a aplicação depende só de `ILlmClient` e `IEmbeddingService`, definidos em `Application`. O `GeminiClient` é apenas uma implementação em `Infrastructure`; usar Groq, Ollama ou OpenAI significa escrever outra implementação e trocar uma linha no registro de dependências, sem tocar em casos de uso ou domínio ([ADR 0004](docs/adr/0004-gemini-behind-llm-port.md)).
 
 Essa regra não é só convenção: **testes de arquitetura** (`NetArchTest`) quebram o build se uma camada depender de algo que não deveria. Detalhes e trade-offs em [ADR 0001](docs/adr/0001-clean-architecture.md).
 
@@ -80,6 +83,8 @@ Essa regra não é só convenção: **testes de arquitetura** (`NetArchTest`) qu
 | Banco | PostgreSQL 18 + pgvector | Dados relacionais e vetoriais no mesmo banco, sem um serviço extra |
 | ORM | EF Core 10 + Npgsql, convenção snake_case | Migrations versionadas; nomes no padrão do PostgreSQL, legíveis também para o SQL gerado pelo LLM |
 | Casos de uso | Handlers próprios (CQRS leve) + Scrutor | Sem dependência com licença comercial ([ADR 0002](docs/adr/0002-own-cqrs-handlers.md)) |
+| IA | Google Gemini (plano gratuito), REST API | Texto, JSON estruturado, function calling e embeddings sem custo ([ADR 0004](docs/adr/0004-gemini-behind-llm-port.md)) |
+| Resiliência | Microsoft.Extensions.Http.Resilience (Polly) | Retry com backoff para o limite do plano gratuito, timeouts e circuit breaker |
 | Cache | Redis 8 | Cache de respostas do agente |
 | Logs | Serilog | Logs estruturados configuráveis por `appsettings` |
 | Documentação da API | OpenAPI + Scalar | Documento OpenAPI nativo do .NET com uma UI moderna |
@@ -99,12 +104,15 @@ curl http://localhost:8080/api/menu
 
 Na primeira subida, a API aplica as migrations e carrega os dados fictícios de [`seed/`](seed/) (só em banco vazio). Para recriar do zero: `docker compose down -v`.
 
-A chave do Gemini (`GEMINI_API_KEY` no `.env`) será necessária a partir das funcionalidades de IA. Ela pode ser gerada gratuitamente no [Google AI Studio](https://aistudio.google.com/apikey).
+As funcionalidades de IA precisam de uma chave do Gemini, gerada gratuitamente no [Google AI Studio](https://aistudio.google.com/apikey). No Docker, coloque-a em `GEMINI_API_KEY` no `.env`. Sem a chave a API sobe normalmente e o `/health` mostra o Gemini como `Degraded`.
+
+Os modelos são configuráveis (`Gemini__GenerationModel`, `Gemini__EmbeddingModel`); os padrões estão em [`appsettings.json`](backend/src/RestaurantCopilot.Api/appsettings.json).
 
 ### Rodando a API localmente (sem container)
 
 ```bash
 docker compose up -d postgres redis
+dotnet user-secrets set "Gemini:ApiKey" "<sua-chave>" --project backend/src/RestaurantCopilot.Api
 dotnet run --project backend/src/RestaurantCopilot.Api
 ```
 
@@ -143,12 +151,13 @@ GET /health
   "durationMs": 71.5,
   "checks": {
     "postgres": { "status": "Healthy", "description": null, "durationMs": 69.9 },
-    "redis": { "status": "Healthy", "description": null, "durationMs": 49.1 }
+    "redis": { "status": "Healthy", "description": null, "durationMs": 49.1 },
+    "gemini": { "status": "Healthy", "description": "Model gemini-2.5-flash is reachable.", "durationMs": 180.2 }
   }
 }
 ```
 
-Retorna `503 Service Unavailable` quando alguma dependência está fora do ar, indicando qual.
+Retorna `503 Service Unavailable` quando o PostgreSQL ou o Redis estão fora do ar, indicando qual. Problemas no Gemini deixam o status `Degraded` (HTTP 200), porque o resto da API continua funcionando.
 
 ## Testes e CI
 
@@ -162,8 +171,8 @@ Os testes rodam na **Microsoft.Testing.Platform** com xUnit v3. Os testes de int
 | Projeto | Cobre |
 |---|---|
 | `RestaurantCopilot.Domain.Tests` | Invariantes das entidades e value objects (`Money`, `Rating`, `Order`, `Review`...) |
-| `RestaurantCopilot.Application.Tests` | Casos de uso com dublês (NSubstitute) |
-| `RestaurantCopilot.Infrastructure.Tests` | Repositórios, mapeamentos do EF Core e seed contra PostgreSQL real |
+| `RestaurantCopilot.Application.Tests` | Casos de uso e saída estruturada do LLM com dublês (NSubstitute) |
+| `RestaurantCopilot.Infrastructure.Tests` | Repositórios, mapeamentos do EF Core e seed contra PostgreSQL real; cliente Gemini (formato das requisições, function calling, erros, retry de `429`) com um `HttpMessageHandler` falso, sem rede |
 | `RestaurantCopilot.Api.Tests` | Regras de dependência entre camadas e endpoints de ponta a ponta (ex.: `/api/menu`, `/health` com Redis fora do ar) |
 
 O [workflow de CI](.github/workflows/ci.yml) roda em todo push na `main` e em pull requests: restore, `dotnet format --verify-no-changes`, build em Release com warnings tratados como erros, testes e build da imagem Docker.
@@ -179,6 +188,7 @@ Planejado (Fase 9): um conjunto de perguntas com respostas esperadas sobre os da
 - **Imagem Docker sem root:** a API roda com o usuário `app` da imagem oficial da Microsoft.
 - **Erros de negócio como valores:** factories e casos de uso retornam `Result<T>`; a API traduz o tipo do erro em status HTTP (400/404/409) com Problem Details. Exceções ficam para o que é realmente excepcional.
 - **Seed determinístico e versionado** ([ADR 0003](docs/adr/0003-deterministic-seed-data.md)): os mesmos dados alimentam demo, testes e avaliação do agente, e todo registro passa pelas regras do domínio.
+- **Limites do plano gratuito do Gemini:** chamadas com retry exponencial e jitter (respeitando `Retry-After`), timeout por tentativa e total, e erros explícitos (`Llm.RateLimited`) quando as tentativas acabam. Os testes nunca chamam a API real.
 - **Enums gravados como texto** no banco (`'Delivery'` em vez de `0`): consultas, inclusive as geradas pelo LLM, ficam legíveis sem tabela de-para.
 
 As decisões completas estão nos [ADRs](docs/adr/).
@@ -187,7 +197,7 @@ As decisões completas estão nos [ADRs](docs/adr/).
 
 1. ~~Fundação: solution, Docker Compose, CI, health check~~ ✅
 2. ~~Domínio e dados: entidades, EF Core, migrations e seed fictício~~ ✅
-3. Integração com o Gemini atrás de `ILlmClient`, com resiliência
+3. ~~Integração com o Gemini atrás de `ILlmClient`, com resiliência~~ ✅
 4. Análise de avaliações e endpoint de insights
 5. RAG com pgvector
 6. Agente com function calling e `/api/chat`
