@@ -6,7 +6,7 @@ WORKDIR /src
 
 # Restore first, copying only the files that affect it, so the layer is cached
 # until a project file or package version changes.
-COPY global.json Directory.Build.props Directory.Packages.props ./
+COPY .editorconfig global.json Directory.Build.props Directory.Packages.props ./
 COPY src/RestaurantCopilot.Domain/RestaurantCopilot.Domain.csproj src/RestaurantCopilot.Domain/
 COPY src/RestaurantCopilot.Application/RestaurantCopilot.Application.csproj src/RestaurantCopilot.Application/
 COPY src/RestaurantCopilot.Infrastructure/RestaurantCopilot.Infrastructure.csproj src/RestaurantCopilot.Infrastructure/

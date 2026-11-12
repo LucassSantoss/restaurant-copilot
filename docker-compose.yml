@@ -6,7 +6,7 @@ services:
       context: ./backend
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__Postgres: Host=postgres;Port=5432;Database=${POSTGRES_DB:-restaurant_copilot};Username=${POSTGRES_USER:-copilot};Password=${POSTGRES_PASSWORD:-copilot}
+      ConnectionStrings__Postgres: Host=postgres;Port=5432;Database=${POSTGRES_DB:-restaurant_copilot};Username=${POSTGRES_USER:-copilot};Password=${POSTGRES_PASSWORD:-copilot};Gss Encryption Mode=Disable
       ConnectionStrings__Redis: redis:6379
       Database__SeedPath: /seed
     volumes:
