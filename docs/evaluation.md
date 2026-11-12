@@ -44,4 +44,4 @@ O runner chama a API por HTTP, como um cliente real, com `Cache-Control: no-cach
 
 ## Resultados
 
-> ⏳ **Ainda não executada.** A execução exige uma chave do Gemini. Ao rodar, o resumo será registrado aqui e no README, e o relatório completo ficará em `evaluation/results/latest.md`.
+> ⏳ **Ainda não concluída.** Uma primeira execução com `gemini-3.5-flash` acertou as 4 primeiras perguntas que conseguiram resposta (`sales-01`, `02`, `03` e `05`), mas esgotou a cota gratuita do modelo (20 requisições por dia) na quarta pergunta. A rodada completa precisa de ~90 chamadas (agente + juiz): com o plano gratuito, ela deve ser dividida em vários dias com `--only`, ou rodada com faturamento habilitado. O resumo será registrado aqui e no README, e o relatório completo ficará em `evaluation/results/latest.md`.

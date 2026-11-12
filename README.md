@@ -8,7 +8,14 @@
 
 > **English summary:** RestaurantCopilot is an ASP.NET Core (.NET 10) API where restaurant owners ask natural-language questions about their business. An AI agent built on Google Gemini uses function calling over typed tools, RAG on PostgreSQL + pgvector and parser-guarded, read-only text-to-SQL to answer from real data, citing its sources. Reviews are classified with schema-constrained LLM output, answers are cached in Redis with version-based invalidation, and an evaluation runner grades the agent on a fixed question set. The codebase follows Clean Architecture (enforced by architecture tests), has 200+ unit and Testcontainers-based integration tests, and runs locally with a single `docker compose up`.
 
-<!-- Demonstração: GIF de uma conversa com o /api/chat será adicionado aqui. -->
+![Conversa com o copiloto: o agente usa SQL, relatório e avaliações para apontar a Lasanha à Bolonhesa como o prato com mais reclamações](docs/images/chat.jpg)
+
+<details>
+<summary>Tela inicial</summary>
+
+![Tela inicial com sugestões de perguntas, pulso das avaliações e status das dependências](docs/images/empty.jpg)
+
+</details>
 
 ---
 
@@ -26,6 +33,7 @@ O RestaurantCopilot transforma essas perguntas em consultas aos dados reais e de
 - **Análise de avaliações:** cada avaliação é classificada por **sentimento** e **temas** (atraso, sabor, embalagem, preço, atendimento) com saída JSON estruturada; `GET /api/reviews/insights` resume um período.
 - **Cache de respostas** no Redis, invalidado automaticamente quando os dados mudam.
 - **Avaliação do agente:** 26 perguntas com respostas conhecidas e um runner que mede a taxa de acerto.
+- **Interface web** em React + TypeScript: chat com respostas em Markdown, "como cheguei aqui" (ferramentas, SQL, fontes e tokens) e um painel com o pulso das avaliações e o status das dependências.
 
 | Método | Rota | Descrição |
 |---|---|---|
@@ -88,6 +96,7 @@ A regra não é só convenção: **testes de arquitetura** (`NetArchTest`) quebr
 │   └── evaluation.md               # metodologia e resultados da avaliação
 ├── evaluation/                     # perguntas e relatórios da avaliação
 ├── seed/                           # gerador e dados fictícios (JSON)
+├── frontend/                       # interface de chat (React + TypeScript + Vite)
 ├── docker/postgres/initdb/         # cria o login somente leitura do texto para SQL
 ├── docker-compose.yml              # API + PostgreSQL (pgvector) + Redis
 └── .github/workflows/ci.yml
@@ -109,6 +118,7 @@ A regra não é só convenção: **testes de arquitetura** (`NetArchTest`) quebr
 | Logs | Serilog | Logs estruturados configuráveis por `appsettings`, com tokens e latência de cada chamada ao LLM |
 | Documentação da API | OpenAPI + Scalar | Documento OpenAPI nativo do .NET com uma UI moderna |
 | Testes | xUnit v3, Shouldly, NSubstitute, Testcontainers, NetArchTest | Integração contra PostgreSQL e Redis reais; regras de arquitetura verificadas |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS 4, Motion | Interface rápida de construir e de navegar, com animações declarativas; nginx no Docker faz proxy da API |
 | Infra local / CI | Docker Compose, GitHub Actions | Ambiente reproduzível com um comando; build, lint, testes e imagem Docker em todo push e PR |
 
 ## Como rodar
@@ -118,8 +128,10 @@ A regra não é só convenção: **testes de arquitetura** (`NetArchTest`) quebr
 ```bash
 cp .env.example .env          # coloque sua chave em GEMINI_API_KEY
 docker compose up -d --build
-curl http://localhost:8080/health
 ```
+
+- Interface web: http://localhost:3000
+- API: http://localhost:8080 (`/health`, `/scalar` em desenvolvimento)
 
 Na primeira subida, o PostgreSQL cria o login somente leitura (`docker/postgres/initdb`), e a API aplica as migrations e carrega os dados fictícios de [`seed/`](seed/) (só em banco vazio). Para recriar do zero: `docker compose down -v`.
 
@@ -300,7 +312,7 @@ O agente é avaliado com **26 perguntas** sobre os dados do seed: vendas, texto 
 
 ## Decisões técnicas e trade-offs
 
-- **Limites do plano gratuito do Gemini:** retry exponencial com jitter (respeitando `Retry-After`), timeout por tentativa e total, classificação em lotes de 25 e reindex com chamadas em lote de 100 textos. Quando as tentativas acabam, o erro é explícito (`Llm.RateLimited`, HTTP 503), nunca um 500.
+- **Limites do plano gratuito do Gemini:** retry exponencial com jitter (respeitando `Retry-After`), timeout por tentativa e total, classificação em lotes de 25 e embeddings ritmados por um rate limiter (o plano gratuito conta cada texto como uma requisição, 100 por minuto). Quando as tentativas acabam, o erro é explícito (`Llm.RateLimited`, HTTP 503), nunca um 500. Atenção: no momento, o `gemini-3.5-flash` gratuito permite só **20 requisições por dia**; cada pergunta ao agente usa de 2 a 4, por isso o cache faz diferença.
 - **Cache que não serve resposta velha:** a chave inclui a data de hoje no fuso do restaurante e uma versão dos dados, trocada a cada nova avaliação, classificação ou reindex. Se o Redis cair, o cache vira *miss* em vez de erro ([ADR 0009](docs/adr/0009-chat-answer-cache.md)).
 - **Texto para SQL em três camadas:** guard com parser de PostgreSQL (um único `SELECT`, sem comentários, sem palavras de escrita em lugar nenhum, sem catálogos), role do banco que só lê as tabelas de negócio e transação `READ ONLY` com timeout e limite de linhas. Cada camada sozinha já impede escrita ([ADR 0008](docs/adr/0008-text-to-sql-defense-in-depth.md)).
 - **Agente limitado e tolerante a erros:** no máximo 6 turnos com ferramentas (depois, uma resposta forçada sem ferramentas), timeout total, e erros de ferramenta devolvidos ao modelo para que ele se corrija ([ADR 0007](docs/adr/0007-agent-function-calling.md)).
@@ -321,7 +333,6 @@ As decisões completas estão nos [ADRs](docs/adr/).
 
 - Executar e publicar a avaliação do agente; rodá-la periodicamente no CI com uma chave dedicada.
 - Diagramas de arquitetura e de fluxo em Mermaid ([`docs/diagrams/`](docs/diagrams/)).
-- Frontend de chat em React + TypeScript + Vite (`frontend/`).
 - Autenticação (JWT) e suporte a vários restaurantes, com isolamento por tenant também no texto para SQL (row-level security).
 - Respostas em streaming (Server-Sent Events) no `/api/chat`.
 - Indexação incremental do RAG ao cadastrar avaliações.
