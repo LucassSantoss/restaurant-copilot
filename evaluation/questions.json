@@ -1,8 +1,9 @@
 {
-  "description": "Agent evaluation set. Expected values were computed from the committed seed data (seed/*.json); every numeric item lists the reference SQL that reproduces it. Periods are explicit so results do not depend on the day the evaluation runs.",
+  "description": "Agent evaluation set. Questions tagged with the 'smoke' suite form a small, cheap subset (one tool call each, deterministic grading) that fits the Gemini free-tier daily quota. Expected values were computed from the committed seed data (seed/*.json); every numeric item lists the reference SQL that reproduces it. Periods are explicit so results do not depend on the day the evaluation runs.",
   "questions": [
     {
       "id": "sales-01",
+      "suites": ["smoke"],
       "category": "sales",
       "question": "Qual foi o faturamento total de outubro de 2026?",
       "grading": { "type": "numeric", "expected": [55284.70] },
@@ -35,6 +36,7 @@
     },
     {
       "id": "sales-05",
+      "suites": ["smoke"],
       "category": "sales",
       "question": "Quantos pedidos foram cancelados em agosto de 2026?",
       "grading": { "type": "numeric", "expected": [15] },
@@ -99,6 +101,7 @@
     },
     {
       "id": "sql-01",
+      "suites": ["smoke"],
       "category": "text-to-sql",
       "question": "Considerando todos os pedidos concluídos, em qual hora do dia (horário local) entram mais pedidos?",
       "grading": { "type": "keywords", "keywords": ["21"] },
@@ -147,6 +150,7 @@
     },
     {
       "id": "reviews-03",
+      "suites": ["smoke"],
       "category": "reviews",
       "question": "Quantas avaliações com nota 1 ou 2 eu recebi em setembro de 2026?",
       "grading": { "type": "numeric", "expected": [19] },

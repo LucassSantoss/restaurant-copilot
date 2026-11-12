@@ -19,6 +19,7 @@ internal sealed record EvaluationDataset(string Description, IReadOnlyList<Evalu
     }
 }
 
+/// <param name="Suites">Named subsets the question belongs to (e.g. "smoke"); every question is in "full".</param>
 /// <param name="ExpectedTools">Tools a good answer is expected to use; reported, not graded.</param>
 /// <param name="ReferenceSql">SQL that reproduces the expected value from the seed data.</param>
 internal sealed record EvaluationQuestion(
@@ -26,8 +27,21 @@ internal sealed record EvaluationQuestion(
     string Category,
     string Question,
     GradingSpec Grading,
+    IReadOnlyList<string>? Suites = null,
     IReadOnlyList<string>? ExpectedTools = null,
     string? ReferenceSql = null);
+
+internal static class Suites
+{
+    /// <summary>A handful of cheap questions that fit the free-tier daily quota. The default.</summary>
+    public const string Smoke = "smoke";
+
+    /// <summary>Every question.</summary>
+    public const string Full = "full";
+
+    public static bool Contains(this EvaluationQuestion question, string suite) =>
+        suite == Full || (question.Suites?.Contains(suite) ?? false);
+}
 
 internal enum GradingType
 {

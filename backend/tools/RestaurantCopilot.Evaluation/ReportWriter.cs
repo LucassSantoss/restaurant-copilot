@@ -11,13 +11,19 @@ internal static class ReportWriter
     public static string Render(IReadOnlyList<QuestionResult> results, string model, DateTimeOffset startedAt)
     {
         var report = new StringBuilder();
+        var skipped = results.Count(result => result.WasSkipped);
+        results = results.Where(result => !result.WasSkipped).ToList();
         var passed = results.Count(result => result.Grade.Passed);
 
         report.AppendLine("# Resultado da avaliação do agente").AppendLine();
         report.AppendLine(Invariant, $"- **Data:** {startedAt:yyyy-MM-dd HH:mm} UTC");
         report.AppendLine(Invariant, $"- **Modelo:** `{model}`");
         report.AppendLine(Invariant, $"- **Taxa de acerto:** **{passed}/{results.Count} ({Percent(passed, results.Count)})**");
-        report.AppendLine(Invariant, $"- **Latência média:** {results.Average(result => result.Outcome.Elapsed.TotalSeconds):0.0} s");
+        if (skipped > 0)
+        {
+            report.AppendLine(Invariant, $"- **Puladas:** {skipped} (orçamento de chamadas ao LLM esgotado)");
+        }
+        report.AppendLine(Invariant, $"- **Latência média:** {(results.Count == 0 ? 0 : results.Average(result => result.Outcome.Elapsed.TotalSeconds)):0.0} s");
         report.AppendLine(Invariant, $"- **Tokens:** {results.Sum(result => result.Outcome.InputTokens):N0} de entrada / {results.Sum(result => result.Outcome.OutputTokens):N0} de saída");
 
         var withExpectation = results.Where(result => result.UsedExpectedTool is not null).ToList();

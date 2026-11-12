@@ -8,7 +8,9 @@ internal sealed record CommandLineArguments(
     string OutputPath,
     TimeSpan Delay,
     bool Prepare,
-    IReadOnlySet<string> OnlyIds)
+    IReadOnlySet<string> OnlyIds,
+    string Suite,
+    int MaxLlmCalls)
 {
     public static CommandLineArguments Parse(string[] args)
     {
@@ -21,6 +23,8 @@ internal sealed record CommandLineArguments(
             Value("--output") ?? "evaluation/results/latest.md",
             TimeSpan.FromSeconds(double.Parse(Value("--delay") ?? "4", CultureInfo.InvariantCulture)),
             args.Contains("--prepare"),
-            (Value("--only") ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToHashSet());
+            (Value("--only") ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToHashSet(),
+            Value("--suite") ?? Suites.Smoke,
+            int.Parse(Value("--max-llm-calls") ?? "10", CultureInfo.InvariantCulture));
     }
 }
