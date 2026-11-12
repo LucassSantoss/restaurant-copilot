@@ -70,6 +70,7 @@ dotnet_naming_style.async_suffix.required_suffix = Async
 # Analyzer tuning
 dotnet_diagnostic.CA1848.severity = none   # LoggerMessage delegates: verbosity not worth it here
 dotnet_diagnostic.CA2007.severity = none   # ConfigureAwait: no SynchronizationContext in ASP.NET Core
+dotnet_diagnostic.CA1716.severity = none   # Keyword clash with other .NET languages (e.g. VB "Error"): C#-only codebase
 
 [backend/tests/**.cs]
 # Test method names use underscores (Method_Scenario_Expected)
