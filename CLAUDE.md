@@ -10,6 +10,10 @@ dotnet run --project backend/src/RestaurantCopilot.Api   # http://localhost:5080
 cd backend && dotnet test                         # needs Docker (Testcontainers)
 cd backend && dotnet format --verify-no-changes   # lint, same as CI
 docker compose up -d --build                      # full stack, API on :8080
+docker compose down -v                            # reset data (re-runs migrations, seed and the postgres init script)
+dotnet run seed/generate.cs                       # regenerate seed JSON (deterministic); update test counts and docs if it changes
+dotnet run --project backend/tools/RestaurantCopilot.Evaluation -- --prepare   # agent evaluation (needs a Gemini key)
+cd backend && dotnet ef migrations add <Name> -p src/RestaurantCopilot.Infrastructure -s src/RestaurantCopilot.Infrastructure -o Persistence/Migrations
 ```
 
 ## Architecture
@@ -22,6 +26,8 @@ Clean Architecture in `backend/src`, dependencies point inward: `Api → Infrast
 - `Api`: endpoints, DI composition, middlewares. No business logic.
 
 Architecture tests in `backend/tests/RestaurantCopilot.Api.Tests/Architecture` enforce these rules. The app models a single restaurant (no multi-tenancy, no auth in the MVP).
+
+Key flows: `POST /api/chat` → `AskQuestionCommandHandler` (cache) → `AgentOrchestrator` (function-calling loop) → tools in `Application/Agent/Tools` (`AgentTool<TArguments>` derives the JSON Schema from the arguments record). Text-to-SQL goes through `SqlQueryGuard` and `ReadOnlySqlExecutor` (role `copilot_readonly`). Tests never call Gemini: use `ScriptedLlmClient`, NSubstitute or the fake `HttpMessageHandler`.
 
 ## Conventions
 
