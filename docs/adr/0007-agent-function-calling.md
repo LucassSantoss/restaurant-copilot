@@ -30,6 +30,6 @@ O dono do restaurante pergunta em linguagem livre ("qual foi meu faturamento na 
 
 ## Consequências
 
-- Respostas numéricas vêm de consultas determinísticas, não da "memória" do modelo; a avaliação (Fase 9) mede se o modelo escolhe as ferramentas e períodos certos.
-- Cada pergunta custa de 2 a ~7 chamadas ao LLM; daí o cache (Fase 8).
-- Perguntas analíticas fora do que as ferramentas cobrem ficam para o texto para SQL (Fase 7).
+- Respostas numéricas vêm de consultas determinísticas, não da "memória" do modelo; a [avaliação do agente](../evaluation.md) mede se o modelo escolhe as ferramentas e períodos certos.
+- Cada pergunta custa de 2 a ~7 chamadas ao LLM; daí o cache ([ADR 0009](0009-chat-answer-cache.md)).
+- Perguntas analíticas fora do que as ferramentas cobrem ficam para o texto para SQL ([ADR 0008](0008-text-to-sql-defense-in-depth.md)), que acrescentou a ferramenta `query_database`.

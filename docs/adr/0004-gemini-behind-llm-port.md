@@ -21,3 +21,8 @@ O projeto precisa de um LLM com geração de texto, saída JSON estruturada, fun
 - **Trocar de provedor** (Groq, Ollama, OpenAI) exige apenas uma nova implementação de `ILlmClient`/`IEmbeddingService` e a troca do registro na injeção de dependência; casos de uso e domínio não mudam.
 - **Detalhes do provedor que precisam voltar na conversa** (as *thought signatures* dos modelos Gemini 3 em chamadas de ferramenta) trafegam como um campo opaco (`LlmToolCall.ProviderState`), sem a aplicação conhecer seu significado.
 - **Custo de manutenção:** mudanças na REST API do Gemini exigem ajustar os contratos em `GeminiContracts.cs`, que um SDK absorveria. Como usamos poucos campos, o risco é baixo.
+
+## Notas de operação (2026-11-11)
+
+- O `gemini-2.5-flash` deixou de aceitar chaves novas; o padrão passou a ser `gemini-3.5-flash`. A troca foi só de configuração, sem mudança de código, como esta decisão previa.
+- No plano gratuito, o `gemini-3.5-flash` permite 20 requisições por dia, e os embeddings, 100 textos por minuto (cada texto de um lote conta como uma requisição). O cliente de embeddings ganhou um rate limiter compartilhado para respeitar esse limite.

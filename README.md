@@ -141,7 +141,7 @@ Com a chave configurada, prepare os dados para o agente uma vez:
 
 ```bash
 curl -X POST http://localhost:8080/api/ingestion/classify-reviews   # classifica as avaliações do seed
-curl -X POST http://localhost:8080/api/ingestion/reindex            # gera os embeddings do RAG
+curl -X POST http://localhost:8080/api/ingestion/reindex            # gera os embeddings do RAG (~2 min no plano gratuito)
 curl -X POST http://localhost:8080/api/chat -H 'Content-Type: application/json' \
      -d '{"question": "Quais pratos tiveram mais reclamações em outubro de 2026?"}'
 ```
@@ -157,6 +157,8 @@ dotnet run --project backend/src/RestaurantCopilot.Api
 - API: http://localhost:5080
 - Documentação interativa (Scalar): http://localhost:5080/scalar
 - OpenAPI: http://localhost:5080/openapi/v1.json
+
+Para o frontend em modo de desenvolvimento (com recarga automática), com a API rodando: `cd frontend && npm install && npm run dev` → http://localhost:5173 (encaminha `/api` para a porta 8080; veja [`frontend/README.md`](frontend/README.md)).
 
 ## Exemplos de requisições
 

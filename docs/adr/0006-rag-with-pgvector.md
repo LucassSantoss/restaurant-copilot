@@ -14,7 +14,7 @@ Perguntas como *"o que os clientes estão falando sobre a embalagem?"* não se r
 - **Documentos autocontidos:** cada item vira um texto em português com o que o LLM precisa para citá-lo (prato, nota, data local, dia da semana), porque o trecho é lido sem as linhas do banco ao redor.
 - **Tipos de tarefa:** documentos são embutidos como `RETRIEVAL_DOCUMENT` e perguntas como `RETRIEVAL_QUERY`, o que melhora a recuperação no Gemini.
 - **Dimensão 768:** o `gemini-embedding-001` permite vetores truncados (até 3072). 768 dimensões ocupam 4× menos espaço com perda pequena de qualidade. A dimensão está no schema; o reindex compara a configuração do modelo com a do banco **antes** de gastar cota.
-- **Reindex completo e atômico:** `POST /api/ingestion/reindex` reconstrói o índice e o troca numa única transação; buscas nunca veem um índice pela metade. Com ~240 documentos, isso custa 3 chamadas em lote ao Gemini.
+- **Reindex completo e atômico:** `POST /api/ingestion/reindex` reconstrói o índice e o troca numa única transação; buscas nunca veem um índice pela metade. Com ~270 documentos (24 pratos + 242 avaliações), isso leva cerca de 2 minutos: o plano gratuito do Gemini conta cada texto como uma requisição (100 por minuto), e o `GeminiEmbeddingService` espaça os lotes com um rate limiter em vez de levar `429`.
 
 ## Consequências
 

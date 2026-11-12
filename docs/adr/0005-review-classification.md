@@ -19,4 +19,4 @@ Cada avaliação precisa de um **sentimento** (positivo, neutro, negativo) e dos
 ## Consequências
 
 - As regras de agregação ficam em C# simples, cobertas por testes unitários. Para milhões de avaliações, o próximo passo seria agregar em SQL.
-- A qualidade da classificação depende do modelo configurado. A avaliação do agente (Fase 9) inclui perguntas que dependem dela.
+- A qualidade da classificação depende do modelo configurado. A [avaliação do agente](../evaluation.md) inclui perguntas que dependem dela.

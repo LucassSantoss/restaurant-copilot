@@ -9,7 +9,8 @@ docker compose up -d postgres redis              # local dependencies
 dotnet run --project backend/src/RestaurantCopilot.Api   # http://localhost:5080 (/scalar, /health)
 cd backend && dotnet test                         # needs Docker (Testcontainers)
 cd backend && dotnet format --verify-no-changes   # lint, same as CI
-docker compose up -d --build                      # full stack, API on :8080
+docker compose up -d --build                      # full stack: web UI on :3000, API on :8080
+cd frontend && npm run dev                        # web UI on :5173 (proxies /api to :8080); npm run lint / npm run build
 docker compose down -v                            # reset data (re-runs migrations, seed and the postgres init script)
 dotnet run seed/generate.cs                       # regenerate seed JSON (deterministic); update test counts and docs if it changes
 dotnet run --project backend/tools/RestaurantCopilot.Evaluation -- --prepare   # agent evaluation (needs a Gemini key)
@@ -24,10 +25,11 @@ Clean Architecture in `backend/src`, dependencies point inward: `Api → Infrast
 - `Application`: use cases (own lightweight CQRS handlers, no MediatR), DTOs, ports (`ILlmClient`, `IEmbeddingService`, `IVectorStore`, `IAgentTool`, `ICacheService`, `ISqlQueryGuard`). Never references EF Core, Npgsql, Redis or ASP.NET Core.
 - `Infrastructure`: implementations of the ports (EF Core/Postgres, pgvector, Redis, Gemini).
 - `Api`: endpoints, DI composition, middlewares. No business logic.
+- `frontend/`: React + TypeScript + Vite chat UI (Tailwind 4, Motion). Talks only to the API through `/api` and `/health`.
 
 Architecture tests in `backend/tests/RestaurantCopilot.Api.Tests/Architecture` enforce these rules. The app models a single restaurant (no multi-tenancy, no auth in the MVP).
 
-Key flows: `POST /api/chat` → `AskQuestionCommandHandler` (cache) → `AgentOrchestrator` (function-calling loop) → tools in `Application/Agent/Tools` (`AgentTool<TArguments>` derives the JSON Schema from the arguments record). Text-to-SQL goes through `SqlQueryGuard` and `ReadOnlySqlExecutor` (role `copilot_readonly`). Tests never call Gemini: use `ScriptedLlmClient`, NSubstitute or the fake `HttpMessageHandler`.
+Key flows: `POST /api/chat` → `AskQuestionCommandHandler` (cache) → `AgentOrchestrator` (function-calling loop) → tools in `Application/Agent/Tools` (`AgentTool<TArguments>` derives the JSON Schema from the arguments record). Text-to-SQL goes through `SqlQueryGuard` and `ReadOnlySqlExecutor` (role `copilot_readonly`). Tests never call Gemini: use `ScriptedLlmClient`, NSubstitute or the fake `HttpMessageHandler`. The Gemini free tier allows only 20 generation requests/day: never run the evaluation or real LLM calls automatically; the evaluation defaults to the cheap `smoke` suite.
 
 ## Conventions
 
