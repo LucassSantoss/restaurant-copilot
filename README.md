@@ -308,7 +308,9 @@ O [workflow de CI](.github/workflows/ci.yml) roda em todo push na `main` e em pu
 
 O agente é avaliado com **26 perguntas** sobre os dados do seed: vendas, texto para SQL, avaliações, conselhos e segurança. Respostas numéricas são corrigidas por match exato; as abertas, por palavras-chave ou um LLM como juiz com critérios explícitos. Metodologia completa e como rodar em [`docs/evaluation.md`](docs/evaluation.md).
 
-> ⏳ **Ainda não executada:** a execução exige uma chave do Gemini. O resultado será registrado aqui e em [`evaluation/results/latest.md`](evaluation/results/latest.md).
+A avaliação **não roda automaticamente** (gasta cota real do LLM). Por padrão, `dotnet run --project backend/tools/RestaurantCopilot.Evaluation` executa a suíte rápida **`smoke`** (4 perguntas, ~8 chamadas), que cabe na cota gratuita diária do Gemini; `--suite full` roda as 26.
+
+> ⏳ **Resultado completo pendente:** a cota gratuita (20 requisições/dia) não comporta a rodada completa num único dia. O resultado será registrado aqui e em [`evaluation/results/latest.md`](evaluation/results/latest.md).
 
 ## Decisões técnicas e trade-offs
 
