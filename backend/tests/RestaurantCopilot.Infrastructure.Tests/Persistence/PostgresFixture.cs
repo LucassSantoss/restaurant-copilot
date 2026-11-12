@@ -12,9 +12,26 @@ namespace RestaurantCopilot.Infrastructure.Tests.Persistence;
 /// </summary>
 public sealed class PostgresFixture : IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder("pgvector/pgvector:pg18").Build();
+    public const string ReadOnlyUser = "copilot_readonly";
+    public const string ReadOnlyPassword = "test-readonly";
 
-    public static string SeedDirectory { get; } = FindSeedDirectory();
+    // Same image and init script as docker-compose, so the read-only role exists exactly as in production.
+    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder("pgvector/pgvector:pg18")
+        .WithResourceMapping(new FileInfo(Path.Combine(RepositoryRoot, "docker", "postgres", "initdb", "01-readonly-user.sh")), "/docker-entrypoint-initdb.d/")
+        .WithEnvironment("POSTGRES_READONLY_PASSWORD", ReadOnlyPassword)
+        .Build();
+
+    public static string RepositoryRoot { get; } = FindRepositoryRoot();
+
+    public static string SeedDirectory { get; } = Path.Combine(RepositoryRoot, "seed");
+
+    public string ConnectionString => _container.GetConnectionString();
+
+    public string ReadOnlyConnectionString => new Npgsql.NpgsqlConnectionStringBuilder(ConnectionString)
+    {
+        Username = ReadOnlyUser,
+        Password = ReadOnlyPassword,
+    }.ConnectionString;
 
     public async ValueTask InitializeAsync()
     {
@@ -34,18 +51,17 @@ public sealed class PostgresFixture : IAsyncLifetime
 
     public ValueTask DisposeAsync() => _container.DisposeAsync();
 
-    private static string FindSeedDirectory()
+    private static string FindRepositoryRoot()
     {
         for (var directory = new DirectoryInfo(AppContext.BaseDirectory); directory is not null; directory = directory.Parent)
         {
-            var candidate = Path.Combine(directory.FullName, "seed");
-            if (File.Exists(Path.Combine(candidate, "menu.json")))
+            if (File.Exists(Path.Combine(directory.FullName, "seed", "menu.json")))
             {
-                return candidate;
+                return directory.FullName;
             }
         }
 
-        throw new DirectoryNotFoundException("Could not find the repository 'seed' directory.");
+        throw new DirectoryNotFoundException("Could not find the repository root (the directory containing 'seed').");
     }
 }
 

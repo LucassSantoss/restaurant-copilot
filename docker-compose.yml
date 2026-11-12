@@ -7,6 +7,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__Postgres: Host=postgres;Port=5432;Database=${POSTGRES_DB:-restaurant_copilot};Username=${POSTGRES_USER:-copilot};Password=${POSTGRES_PASSWORD:-copilot};Gss Encryption Mode=Disable
+      ConnectionStrings__PostgresReadOnly: Host=postgres;Port=5432;Database=${POSTGRES_DB:-restaurant_copilot};Username=copilot_readonly;Password=${POSTGRES_READONLY_PASSWORD:-copilot_readonly};Gss Encryption Mode=Disable
       ConnectionStrings__Redis: redis:6379
       Database__SeedPath: /seed
       Gemini__ApiKey: ${GEMINI_API_KEY:-}
@@ -27,11 +28,14 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-copilot}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-copilot}
       POSTGRES_DB: ${POSTGRES_DB:-restaurant_copilot}
+      POSTGRES_READONLY_PASSWORD: ${POSTGRES_READONLY_PASSWORD:-copilot_readonly}
     ports:
       - "5432:5432"
     volumes:
       # PostgreSQL 18+ images keep data under a versioned subdirectory of this path.
       - postgres-data:/var/lib/postgresql
+      # Runs once, on an empty volume: creates the read-only login used by text-to-SQL.
+      - ./docker/postgres/initdb:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s

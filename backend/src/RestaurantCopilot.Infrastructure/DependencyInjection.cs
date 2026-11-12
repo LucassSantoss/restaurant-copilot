@@ -1,12 +1,15 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using RestaurantCopilot.Application.Abstractions.Persistence;
 using RestaurantCopilot.Application.Abstractions.Search;
+using RestaurantCopilot.Application.Abstractions.Sql;
 using RestaurantCopilot.Infrastructure.Ai.Gemini;
 using RestaurantCopilot.Infrastructure.Persistence;
 using RestaurantCopilot.Infrastructure.Persistence.Repositories;
 using RestaurantCopilot.Infrastructure.Persistence.Seeding;
 using RestaurantCopilot.Infrastructure.Search;
+using RestaurantCopilot.Infrastructure.Sql;
 
 namespace RestaurantCopilot.Infrastructure;
 
@@ -19,6 +22,7 @@ public static class DependencyInjection
 
         services.AddPersistence(configuration, postgresConnectionString);
         services.AddGemini(configuration);
+        services.AddTextToSql(configuration);
 
         services.AddHealthChecks()
             .AddNpgSql(postgresConnectionString, name: "postgres")
@@ -41,6 +45,19 @@ public static class DependencyInjection
         services.AddScoped<IReviewRepository, ReviewRepository>();
         services.AddScoped<ISalesRepository, SalesRepository>();
         services.AddScoped<IVectorStore, PgvectorVectorStore>();
+    }
+
+    private static void AddTextToSql(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<TextToSqlOptions>()
+            .Bind(configuration.GetSection(TextToSqlOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        var readOnlyConnectionString = configuration.GetRequiredConnectionString(ConnectionStringNames.PostgresReadOnly);
+        services.AddSingleton(_ => new ReadOnlyDataSource(NpgsqlDataSource.Create(readOnlyConnectionString)));
+        services.AddSingleton<ISqlQueryGuard, SqlQueryGuard>();
+        services.AddScoped<IReadOnlySqlExecutor, ReadOnlySqlExecutor>();
     }
 
     private static string GetRequiredConnectionString(this IConfiguration configuration, string name) =>
