@@ -1,7 +1,11 @@
 using System.Globalization;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using RestaurantCopilot.Api.Endpoints;
 using RestaurantCopilot.Api.HealthChecks;
+using RestaurantCopilot.Application;
 using RestaurantCopilot.Infrastructure;
+using RestaurantCopilot.Infrastructure.Persistence;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -21,11 +25,23 @@ try
 
     builder.Services.AddProblemDetails();
     builder.Services.AddOpenApi();
+    builder.Services.ConfigureHttpJsonOptions(options =>
+        options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+    builder.Services.AddApplication();
     builder.Services.AddInfrastructure(builder.Configuration);
 
     var app = builder.Build();
 
-    app.UseExceptionHandler();
+    await app.Services.InitializeDatabaseAsync();
+
+    app.UseExceptionHandler(new ExceptionHandlerOptions
+    {
+        // Malformed requests (e.g. an unknown enum in the query string) are client errors, not 500s.
+        StatusCodeSelector = exception => exception is BadHttpRequestException badRequest
+            ? badRequest.StatusCode
+            : StatusCodes.Status500InternalServerError,
+    });
     app.UseStatusCodePages();
     app.UseSerilogRequestLogging();
 
@@ -34,6 +50,8 @@ try
         app.MapOpenApi();
         app.MapScalarApiReference();
     }
+
+    app.MapMenuEndpoints();
 
     app.MapHealthChecks("/health", new HealthCheckOptions
     {

@@ -8,6 +8,9 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__Postgres: Host=postgres;Port=5432;Database=${POSTGRES_DB:-restaurant_copilot};Username=${POSTGRES_USER:-copilot};Password=${POSTGRES_PASSWORD:-copilot}
       ConnectionStrings__Redis: redis:6379
+      Database__SeedPath: /seed
+    volumes:
+      - ./seed:/seed:ro
     ports:
       - "8080:8080"
     depends_on:
