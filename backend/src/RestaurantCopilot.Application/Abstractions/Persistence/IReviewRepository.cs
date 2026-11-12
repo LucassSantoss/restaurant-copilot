@@ -11,6 +11,11 @@ public interface IReviewRepository
 
     Task<int> CountUnclassifiedAsync(CancellationToken cancellationToken);
 
+    /// <summary>Reviews matching every set filter, newest first, plus how many match in total.</summary>
+    Task<(IReadOnlyList<ReviewListRow> Reviews, int TotalCount)> SearchAsync(
+        ReviewSearchFilter filter,
+        CancellationToken cancellationToken);
+
     /// <summary>Every review, with the reviewed dish name, for building the search index.</summary>
     Task<IReadOnlyList<ReviewDocumentRow>> ListForIndexingAsync(CancellationToken cancellationToken);
 
@@ -29,3 +34,23 @@ public sealed record ReviewInsightRow(
     string? MenuItemName);
 
 public sealed record ReviewDocumentRow(Guid Id, int Rating, string Comment, DateTimeOffset CreatedAt, string? MenuItemName);
+
+/// <summary>Null properties do not filter. The date range is [StartUtc, EndUtc).</summary>
+public sealed record ReviewSearchFilter(
+    DateTimeOffset? StartUtc,
+    DateTimeOffset? EndUtc,
+    ReviewSentiment? Sentiment,
+    ReviewTheme? Theme,
+    Guid? MenuItemId,
+    int? MaxRating,
+    int Limit);
+
+public sealed record ReviewListRow(
+    Guid Id,
+    int OrderNumber,
+    DateTimeOffset CreatedAt,
+    int Rating,
+    string Comment,
+    string? MenuItemName,
+    ReviewSentiment? Sentiment,
+    IReadOnlyList<ReviewTheme> Themes);
