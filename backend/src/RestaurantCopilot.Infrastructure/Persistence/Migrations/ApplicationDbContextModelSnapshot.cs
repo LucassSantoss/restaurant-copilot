@@ -186,6 +186,10 @@ namespace RestaurantCopilot.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<DateTimeOffset?>("ClassifiedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("classified_at");
+
                     b.Property<string>("Comment")
                         .IsRequired()
                         .HasMaxLength(2000)
@@ -208,8 +212,21 @@ namespace RestaurantCopilot.Infrastructure.Persistence.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("rating");
 
+                    b.Property<string>("Sentiment")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("sentiment");
+
+                    b.PrimitiveCollection<string[]>("_themes")
+                        .IsRequired()
+                        .HasColumnType("text[]")
+                        .HasColumnName("themes");
+
                     b.HasKey("Id")
                         .HasName("pk_reviews");
+
+                    b.HasIndex("ClassifiedAt")
+                        .HasDatabaseName("ix_reviews_classified_at");
 
                     b.HasIndex("CreatedAt")
                         .HasDatabaseName("ix_reviews_created_at");

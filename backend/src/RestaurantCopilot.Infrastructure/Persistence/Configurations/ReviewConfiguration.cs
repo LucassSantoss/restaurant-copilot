@@ -14,7 +14,17 @@ internal sealed class ReviewConfiguration : IEntityTypeConfiguration<Review>
         builder.Property(review => review.Rating).HasConversion(ValueConverters.Rating);
         builder.Property(review => review.Comment).HasMaxLength(Review.CommentMaxLength);
 
+        builder.Property(review => review.Sentiment).HasConversion<string>().HasMaxLength(20);
+
+        // Themes are a native text[] column: simple to filter in SQL ('Packaging' = ANY(themes)).
+        builder.Ignore(review => review.Themes);
+        builder.PrimitiveCollection<List<ReviewTheme>>("_themes")
+            .HasColumnName("themes")
+            .ElementType(element => element.HasConversion<string>());
+        builder.Ignore(review => review.IsClassified);
+
         builder.HasIndex(review => review.CreatedAt);
+        builder.HasIndex(review => review.ClassifiedAt);
 
         builder.HasOne<Order>()
             .WithMany()

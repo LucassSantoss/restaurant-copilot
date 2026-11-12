@@ -29,4 +29,7 @@ internal sealed class MenuItemRepository(ApplicationDbContext dbContext) : IMenu
         // not the alphabetical order of their stored text.
         return [.. items.OrderBy(item => item.Category).ThenBy(item => item.Name, StringComparer.Ordinal)];
     }
+
+    public Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken) =>
+        dbContext.MenuItems.AnyAsync(item => item.Id == id, cancellationToken);
 }

@@ -32,7 +32,11 @@ public static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>(options => PersistenceConfiguration.Configure(options, connectionString));
         services.AddScoped<DatabaseSeeder>();
 
+        services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<ApplicationDbContext>());
+        services.AddScoped<IRestaurantRepository, RestaurantRepository>();
         services.AddScoped<IMenuItemRepository, MenuItemRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IReviewRepository, ReviewRepository>();
     }
 
     private static string GetRequiredConnectionString(this IConfiguration configuration, string name) =>
