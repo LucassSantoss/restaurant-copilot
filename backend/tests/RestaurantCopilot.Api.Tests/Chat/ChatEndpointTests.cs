@@ -68,7 +68,8 @@ public sealed class ChatEndpointTests(ApiFactory factory)
             builder.ConfigureTestServices(services => services.AddSingleton(llm)));
         using var client = app.CreateClient();
 
-        var response = await client.PostAsJsonAsync("/api/chat", new { question = "Quantos pedidos tive?" }, TestContext.Current.CancellationToken);
+        // A distinct question per case: the cache would otherwise answer the second case from the first.
+        var response = await client.PostAsJsonAsync("/api/chat", new { question = $"Quantos pedidos tive? ({sql})" }, TestContext.Current.CancellationToken);
         var body = await response.Content.ReadFromJsonAsync<ChatBody>(TestContext.Current.CancellationToken);
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -83,6 +84,29 @@ public sealed class ChatEndpointTests(ApiFactory factory)
         {
             toolResult.Value.GetProperty("error").GetString().ShouldNotBeNull().ShouldContain("DELETE");
         }
+    }
+
+    [Fact]
+    public async Task Post_SameQuestionTwice_IsAnsweredFromCacheUntilDataChanges()
+    {
+        var llm = Substitute.For<ILlmClient>();
+        llm.GenerateAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
+            .Returns(Result.Success(new LlmResponse("Seu prato mais vendido é a Pizza Margherita.", [], LlmUsage.None)));
+        await using var app = factory.WithWebHostBuilder(builder =>
+            builder.ConfigureTestServices(services => services.AddSingleton(llm)));
+        using var client = app.CreateClient();
+        var question = new { question = $"Qual é meu prato mais vendido? ({Guid.NewGuid()})" };
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        var first = await (await client.PostAsJsonAsync("/api/chat", question, cancellationToken)).Content.ReadFromJsonAsync<ChatBody>(cancellationToken);
+        var second = await (await client.PostAsJsonAsync("/api/chat", question, cancellationToken)).Content.ReadFromJsonAsync<ChatBody>(cancellationToken);
+        await client.PostAsJsonAsync("/api/reviews", new { orderNumber = 1003, rating = 5, comment = "Ótimo!" }, cancellationToken);
+        var afterNewReview = await (await client.PostAsJsonAsync("/api/chat", question, cancellationToken)).Content.ReadFromJsonAsync<ChatBody>(cancellationToken);
+
+        first!.Cached.ShouldBeFalse();
+        second!.Cached.ShouldBeTrue();
+        second.Answer.ShouldBe(first.Answer);
+        afterNewReview!.Cached.ShouldBeFalse();
     }
 
     [Fact]
@@ -105,7 +129,7 @@ public sealed class ChatEndpointTests(ApiFactory factory)
         response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
     }
 
-    private sealed record ChatBody(string Answer, List<SourceBody> Sources, List<StepBody> ToolCalls, UsageBody Usage);
+    private sealed record ChatBody(string Answer, List<SourceBody> Sources, List<StepBody> ToolCalls, UsageBody Usage, bool Cached);
 
     private sealed record SourceBody(string Kind, string Reference, string Description);
 

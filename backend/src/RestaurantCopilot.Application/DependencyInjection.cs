@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RestaurantCopilot.Application.Abstractions.Messaging;
 using RestaurantCopilot.Application.Agent;
 using RestaurantCopilot.Application.Agent.Tools;
+using RestaurantCopilot.Application.Chat;
 using RestaurantCopilot.Application.Reviews.Classification;
 using RestaurantCopilot.Application.Sales;
 
@@ -37,7 +38,9 @@ public static class DependencyInjection
     private static void AddAgent(this IServiceCollection services)
     {
         services.AddOptions<AgentOptions>();
-        services.AddScoped<AgentOrchestrator>();
+        services.AddScoped<IAgentOrchestrator, AgentOrchestrator>();
+        services.AddScoped<IChatCache, ChatCache>();
+        services.AddOptions<ChatCacheOptions>();
         services.AddScoped<MenuItemResolver>();
 
         services.Scan(scan => scan

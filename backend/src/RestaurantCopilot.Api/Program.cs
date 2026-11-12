@@ -5,6 +5,7 @@ using RestaurantCopilot.Api.Endpoints;
 using RestaurantCopilot.Api.HealthChecks;
 using RestaurantCopilot.Application;
 using RestaurantCopilot.Application.Agent;
+using RestaurantCopilot.Application.Chat;
 using RestaurantCopilot.Infrastructure;
 using RestaurantCopilot.Infrastructure.Persistence;
 using Scalar.AspNetCore;
@@ -31,6 +32,7 @@ try
 
     builder.Services.AddApplication();
     builder.Services.Configure<AgentOptions>(builder.Configuration.GetSection(AgentOptions.SectionName));
+    builder.Services.Configure<ChatCacheOptions>(builder.Configuration.GetSection(ChatCacheOptions.SectionName));
     builder.Services.AddInfrastructure(builder.Configuration);
 
     var app = builder.Build();

@@ -24,7 +24,7 @@ internal sealed class AgentOrchestrator(
     ISalesRepository sales,
     TimeProvider timeProvider,
     IOptions<AgentOptions> options,
-    ILogger<AgentOrchestrator> logger)
+    ILogger<AgentOrchestrator> logger) : IAgentOrchestrator
 {
     private readonly AgentOptions _options = options.Value;
     private readonly Dictionary<string, IAgentTool> _tools = tools.ToDictionary(tool => tool.Name);

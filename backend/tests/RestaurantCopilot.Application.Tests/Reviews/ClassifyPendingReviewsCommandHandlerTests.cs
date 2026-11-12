@@ -1,5 +1,6 @@
 using RestaurantCopilot.Application.Abstractions.Ai;
 using RestaurantCopilot.Application.Abstractions.Persistence;
+using RestaurantCopilot.Application.Chat;
 using RestaurantCopilot.Application.Reviews.Classification;
 using RestaurantCopilot.Application.Reviews.ClassifyPendingReviews;
 using RestaurantCopilot.Application.Tests.TestDoubles;
@@ -13,11 +14,12 @@ public sealed class ClassifyPendingReviewsCommandHandlerTests
     private readonly IReviewRepository _reviews = Substitute.For<IReviewRepository>();
     private readonly IReviewClassifier _classifier = Substitute.For<IReviewClassifier>();
     private readonly IUnitOfWork _unitOfWork = Substitute.For<IUnitOfWork>();
+    private readonly IChatCache _chatCache = Substitute.For<IChatCache>();
     private readonly ClassifyPendingReviewsCommandHandler _handler;
 
     public ClassifyPendingReviewsCommandHandlerTests()
     {
-        _handler = new ClassifyPendingReviewsCommandHandler(_reviews, _classifier, _unitOfWork, new FixedTimeProvider(TestData.Now));
+        _handler = new ClassifyPendingReviewsCommandHandler(_reviews, _classifier, _unitOfWork, _chatCache, new FixedTimeProvider(TestData.Now));
     }
 
     [Fact]
@@ -35,6 +37,7 @@ public sealed class ClassifyPendingReviewsCommandHandlerTests
         result.Value.ShouldBe(new ClassifyPendingReviewsResponse(Classified: 3, Pending: 0, StoppedReason: null));
         firstBatch.Concat(secondBatch).ShouldAllBe(review => review.IsClassified);
         await _unitOfWork.Received(2).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _chatCache.Received(1).InvalidateAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -48,6 +51,7 @@ public sealed class ClassifyPendingReviewsCommandHandlerTests
         var result = await _handler.HandleAsync(new ClassifyPendingReviewsCommand(), TestContext.Current.CancellationToken);
 
         result.Value.ShouldBe(new ClassifyPendingReviewsResponse(0, 1, LlmErrors.RateLimited.Message));
+        await _chatCache.DidNotReceiveWithAnyArgs().InvalidateAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]

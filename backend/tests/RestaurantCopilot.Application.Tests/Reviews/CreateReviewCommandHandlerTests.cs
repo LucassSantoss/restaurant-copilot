@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using RestaurantCopilot.Application.Abstractions.Ai;
 using RestaurantCopilot.Application.Abstractions.Persistence;
+using RestaurantCopilot.Application.Chat;
 using RestaurantCopilot.Application.Reviews.Classification;
 using RestaurantCopilot.Application.Reviews.CreateReview;
 using RestaurantCopilot.Application.Tests.TestDoubles;
@@ -16,12 +17,13 @@ public sealed class CreateReviewCommandHandlerTests
     private readonly IReviewRepository _reviews = Substitute.For<IReviewRepository>();
     private readonly IReviewClassifier _classifier = Substitute.For<IReviewClassifier>();
     private readonly IUnitOfWork _unitOfWork = Substitute.For<IUnitOfWork>();
+    private readonly IChatCache _chatCache = Substitute.For<IChatCache>();
     private readonly CreateReviewCommandHandler _handler;
 
     public CreateReviewCommandHandlerTests()
     {
         _handler = new CreateReviewCommandHandler(
-            _orders, _menuItems, _reviews, _classifier, _unitOfWork,
+            _orders, _menuItems, _reviews, _classifier, _unitOfWork, _chatCache,
             new FixedTimeProvider(TestData.Now), NullLogger<CreateReviewCommandHandler>.Instance);
     }
 
@@ -41,6 +43,7 @@ public sealed class CreateReviewCommandHandlerTests
         result.Value.Classification.Themes.ShouldBe([ReviewTheme.Packaging]);
         _reviews.Received(1).Add(Arg.Is<Review>(review => review.OrderId == order.Id && review.IsClassified));
         await _unitOfWork.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _chatCache.Received(1).InvalidateAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]

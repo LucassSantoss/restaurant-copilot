@@ -1,5 +1,6 @@
 using RestaurantCopilot.Application.Abstractions.Messaging;
 using RestaurantCopilot.Application.Abstractions.Persistence;
+using RestaurantCopilot.Application.Chat;
 using RestaurantCopilot.Application.Reviews.Classification;
 using RestaurantCopilot.Domain.Common;
 
@@ -9,6 +10,7 @@ internal sealed class ClassifyPendingReviewsCommandHandler(
     IReviewRepository reviews,
     IReviewClassifier classifier,
     IUnitOfWork unitOfWork,
+    IChatCache chatCache,
     TimeProvider timeProvider) : ICommandHandler<ClassifyPendingReviewsCommand, ClassifyPendingReviewsResponse>
 {
     /// <summary>Reviews per LLM call: few calls for the free tier, small enough for reliable output.</summary>
@@ -45,6 +47,11 @@ internal sealed class ClassifyPendingReviewsCommandHandler(
                 stoppedReason = "The model did not classify any review of the last batch.";
                 break;
             }
+        }
+
+        if (classifiedCount > 0)
+        {
+            await chatCache.InvalidateAsync(cancellationToken);
         }
 
         var pending = await reviews.CountUnclassifiedAsync(cancellationToken);

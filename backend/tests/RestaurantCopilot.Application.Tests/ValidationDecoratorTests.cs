@@ -22,7 +22,8 @@ public sealed class ValidationDecoratorTests
             .AddSingleton(Substitute.For<IMenuItemRepository>())
             .AddSingleton(Substitute.For<IReviewRepository>())
             .AddSingleton(Substitute.For<IUnitOfWork>())
-            .AddSingleton(Substitute.For<ILlmClient>());
+            .AddSingleton(Substitute.For<ILlmClient>())
+            .AddSingleton(Substitute.For<Abstractions.Caching.ICacheService>());
         await using var provider = services.BuildServiceProvider();
         var handler = provider.GetRequiredService<ICommandHandler<CreateReviewCommand, ReviewResponse>>();
 

@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using RestaurantCopilot.Application.Abstractions.Messaging;
 using RestaurantCopilot.Application.Abstractions.Persistence;
+using RestaurantCopilot.Application.Chat;
 using RestaurantCopilot.Application.Common;
 using RestaurantCopilot.Application.Reviews.Classification;
 using RestaurantCopilot.Domain.Common;
@@ -19,6 +20,7 @@ internal sealed class CreateReviewCommandHandler(
     IReviewRepository reviews,
     IReviewClassifier classifier,
     IUnitOfWork unitOfWork,
+    IChatCache chatCache,
     TimeProvider timeProvider,
     ILogger<CreateReviewCommandHandler> logger) : ICommandHandler<CreateReviewCommand, ReviewResponse>
 {
@@ -51,6 +53,7 @@ internal sealed class CreateReviewCommandHandler(
 
         reviews.Add(review.Value);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+        await chatCache.InvalidateAsync(cancellationToken);
 
         return ReviewResponse.FromEntity(review.Value, order.Number);
     }

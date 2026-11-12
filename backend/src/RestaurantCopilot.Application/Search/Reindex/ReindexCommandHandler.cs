@@ -2,6 +2,7 @@ using RestaurantCopilot.Application.Abstractions.Ai;
 using RestaurantCopilot.Application.Abstractions.Messaging;
 using RestaurantCopilot.Application.Abstractions.Persistence;
 using RestaurantCopilot.Application.Abstractions.Search;
+using RestaurantCopilot.Application.Chat;
 using RestaurantCopilot.Application.Common;
 using RestaurantCopilot.Domain.Common;
 
@@ -12,7 +13,8 @@ internal sealed class ReindexCommandHandler(
     IMenuItemRepository menuItems,
     IReviewRepository reviews,
     IEmbeddingService embeddingService,
-    IVectorStore vectorStore) : ICommandHandler<ReindexCommand, ReindexResponse>
+    IVectorStore vectorStore,
+    IChatCache chatCache) : ICommandHandler<ReindexCommand, ReindexResponse>
 {
     public async Task<Result<ReindexResponse>> HandleAsync(ReindexCommand command, CancellationToken cancellationToken)
     {
@@ -47,6 +49,7 @@ internal sealed class ReindexCommandHandler(
             .Zip(embeddings.Value, (source, embedding) => new VectorDocument(source.Source, source.Id, source.Content, embedding))
             .ToList();
         await vectorStore.ReplaceAllAsync(documents, cancellationToken);
+        await chatCache.InvalidateAsync(cancellationToken);
 
         return new ReindexResponse(menu.Count, reviewRows.Count);
     }

@@ -1,6 +1,7 @@
 using RestaurantCopilot.Application.Abstractions.Ai;
 using RestaurantCopilot.Application.Abstractions.Persistence;
 using RestaurantCopilot.Application.Abstractions.Search;
+using RestaurantCopilot.Application.Chat;
 using RestaurantCopilot.Application.Search.Reindex;
 using RestaurantCopilot.Application.Tests.TestDoubles;
 using RestaurantCopilot.Domain.Common;
@@ -15,11 +16,12 @@ public sealed class ReindexCommandHandlerTests
     private readonly IReviewRepository _reviews = Substitute.For<IReviewRepository>();
     private readonly IEmbeddingService _embeddings = Substitute.For<IEmbeddingService>();
     private readonly IVectorStore _vectorStore = Substitute.For<IVectorStore>();
+    private readonly IChatCache _chatCache = Substitute.For<IChatCache>();
     private readonly ReindexCommandHandler _handler;
 
     public ReindexCommandHandlerTests()
     {
-        _handler = new ReindexCommandHandler(_restaurants, _menuItems, _reviews, _embeddings, _vectorStore);
+        _handler = new ReindexCommandHandler(_restaurants, _menuItems, _reviews, _embeddings, _vectorStore, _chatCache);
         _embeddings.Dimensions.Returns(3);
         _vectorStore.Dimensions.Returns(3);
         _restaurants.GetAsync(Arg.Any<CancellationToken>()).Returns(TestData.Restaurant());
@@ -43,6 +45,7 @@ public sealed class ReindexCommandHandlerTests
         indexed.ShouldNotBeNull();
         indexed.Select(document => document.Source).ShouldBe([DocumentSource.MenuItem, DocumentSource.Review]);
         indexed[1].Content.ShouldContain("Delícia!");
+        await _chatCache.Received(1).InvalidateAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
