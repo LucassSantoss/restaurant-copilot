@@ -29,7 +29,7 @@ Clean Architecture in `backend/src`, dependencies point inward: `Api → Infrast
 
 Architecture tests in `backend/tests/RestaurantCopilot.Api.Tests/Architecture` enforce these rules. The app models a single restaurant (no multi-tenancy, no auth in the MVP).
 
-Key flows: `POST /api/chat` → `AskQuestionCommandHandler` (cache) → `AgentOrchestrator` (function-calling loop) → tools in `Application/Agent/Tools` (`AgentTool<TArguments>` derives the JSON Schema from the arguments record). Text-to-SQL goes through `SqlQueryGuard` and `ReadOnlySqlExecutor` (role `copilot_readonly`). Tests never call Gemini: use `ScriptedLlmClient`, NSubstitute or the fake `HttpMessageHandler`. The Gemini free tier allows only 20 generation requests/day: never run the evaluation or real LLM calls automatically; the evaluation defaults to the cheap `smoke` suite.
+Key flows: `POST /api/chat` → `AskQuestionCommandHandler` (cache) → `AgentOrchestrator` (function-calling loop) → tools in `Application/Agent/Tools` (`AgentTool<TArguments>` derives the JSON Schema from the arguments record). `ReviewProcessingWorker` (Infrastructure/Background) classifies pending reviews and incrementally indexes items without a search document; it is disabled in API tests unless a test enables it. Text-to-SQL goes through `SqlQueryGuard` and `ReadOnlySqlExecutor` (role `copilot_readonly`). Tests never call Gemini: use `ScriptedLlmClient`, NSubstitute or the fake `HttpMessageHandler`. The Gemini free tier allows only 20 generation requests/day: never run the evaluation or real LLM calls automatically; the evaluation defaults to the cheap `smoke` suite.
 
 ## Conventions
 

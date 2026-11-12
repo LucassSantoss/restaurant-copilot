@@ -13,6 +13,7 @@ Cada decisão técnica relevante do projeto é registrada aqui como um ADR curto
 | [0007](0007-agent-function-calling.md) | Agente com function calling, ferramentas tipadas e loop limitado | Aceito |
 | [0008](0008-text-to-sql-defense-in-depth.md) | Texto para SQL com defesa em profundidade | Aceito |
 | [0009](0009-chat-answer-cache.md) | Cache de respostas do agente no Redis, com invalidação por versão | Aceito |
+| [0010](0010-background-review-processing.md) | Processamento de avaliações em segundo plano (classificação e indexação incremental) | Aceito |
 
 ## Modelo
 

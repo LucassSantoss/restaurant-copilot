@@ -30,6 +30,7 @@ O RestaurantCopilot transforma essas perguntas em consultas aos dados reais e de
 - **Agente com ferramentas (function calling):** `POST /api/chat` recebe a pergunta; o LLM decide quais ferramentas usar (`search_sales`, `list_reviews`, `semantic_search`, `generate_report`, `query_database`), a aplicação as executa contra os dados reais e o modelo responde citando fontes e ferramentas.
 - **Texto para SQL seguro:** para perguntas analíticas fora das ferramentas, o modelo escreve um `SELECT`, que passa por um guard com parser de PostgreSQL e roda com uma role **somente leitura**, em transação `READ ONLY`, com timeout e limite de linhas.
 - **RAG:** cardápio e avaliações viram embeddings no PostgreSQL com **pgvector** (índice HNSW); a busca semântica encontra "a tampa abriu" quando a pergunta é sobre embalagem.
+- **Processamento automático:** avaliações novas são classificadas e entram na busca semântica sozinhas, em segundos.
 - **Análise de avaliações:** cada avaliação é classificada por **sentimento** e **temas** (atraso, sabor, embalagem, preço, atendimento) com saída JSON estruturada; `GET /api/reviews/insights` resume um período.
 - **Cache de respostas** no Redis, invalidado automaticamente quando os dados mudam.
 - **Avaliação do agente:** 26 perguntas com respostas conhecidas e um runner que mede a taxa de acerto.
@@ -42,7 +43,7 @@ O RestaurantCopilot transforma essas perguntas em consultas aos dados reais e de
 | `GET` | `/api/reviews/insights` | Sentimento, temas e pratos mais criticados por período |
 | `GET` | `/api/menu` | Cardápio, com filtros por categoria e disponibilidade |
 | `GET` | `/api/search` | Busca semântica (etapa de recuperação do RAG) |
-| `POST` | `/api/ingestion/reindex` | Recria os embeddings do cardápio e das avaliações |
+| `POST` | `/api/ingestion/reindex` | Recria todos os embeddings do cardápio e das avaliações (reconstrução completa) |
 | `POST` | `/api/ingestion/classify-reviews` | Classifica as avaliações pendentes, em lote |
 | `GET` | `/health` | Estado do PostgreSQL, do Redis e do Gemini |
 
@@ -137,14 +138,14 @@ Na primeira subida, o PostgreSQL cria o login somente leitura (`docker/postgres/
 
 As funcionalidades de IA precisam de uma chave do Gemini, gerada gratuitamente no [Google AI Studio](https://aistudio.google.com/apikey). Sem a chave, a API sobe normalmente, o `/health` mostra o Gemini como `Degraded` e os endpoints de IA respondem `503`. Os modelos são configuráveis (`Gemini__GenerationModel`, `Gemini__EmbeddingModel`); os padrões estão em [`appsettings.json`](backend/src/RestaurantCopilot.Api/appsettings.json).
 
-Com a chave configurada, prepare os dados para o agente uma vez:
+Com a chave configurada, o processamento em segundo plano classifica as avaliações do seed e monta o índice semântico sozinho na primeira subida (~3 min; usa ~10 das 20 requisições diárias de geração do plano gratuito). Depois disso, é só perguntar:
 
 ```bash
-curl -X POST http://localhost:8080/api/ingestion/classify-reviews   # classifica as avaliações do seed
-curl -X POST http://localhost:8080/api/ingestion/reindex            # gera os embeddings do RAG (~2 min no plano gratuito)
 curl -X POST http://localhost:8080/api/chat -H 'Content-Type: application/json' \
      -d '{"question": "Quais pratos tiveram mais reclamações em outubro de 2026?"}'
 ```
+
+Os endpoints `POST /api/ingestion/classify-reviews` e `POST /api/ingestion/reindex` continuam disponíveis para forçar o processamento ou reconstruir o índice inteiro.
 
 ### Rodando a API localmente (sem container)
 
@@ -210,7 +211,7 @@ Content-Type: application/json
 }
 ```
 
-Se o Gemini estiver indisponível, a avaliação é salva com `"classification": null` e classificada depois por `POST /api/ingestion/classify-reviews`.
+Se o Gemini estiver indisponível, a avaliação é salva com `"classification": null` e o processamento em segundo plano a classifica (e indexa para a busca semântica) assim que o Gemini voltar.
 
 ```http
 GET /api/reviews/insights?from=2026-10-01&to=2026-10-31
@@ -327,6 +328,7 @@ A avaliação **não roda automaticamente** (gasta cota real do LLM). Por padrã
 - **Schemas gerados a partir de tipos:** argumentos de ferramentas e saídas estruturadas (classificação, juiz) são records C#; o JSON Schema enviado ao modelo é derivado deles, então declaração e parsing nunca divergem.
 - **Prompt injection:** avaliações de clientes e resultados de ferramentas são tratados como dados; o classificador não tem ferramentas, e o agente só tem acesso de leitura. No pior caso, uma avaliação é mal classificada.
 - **Classificação que não perde dados:** se o LLM falhar ao cadastrar uma avaliação, ela é salva como pendente e classificada depois, em lote ([ADR 0005](docs/adr/0005-review-classification.md)).
+- **Avaliações processadas em segundo plano:** ao cadastrar uma avaliação, um worker a classifica e a adiciona à busca semântica em segundos, só com o que está pendente (indexação incremental). Pendências ficam no banco, então nada se perde se a API reiniciar ou o Gemini cair; falhas esperam cada vez mais, até 15 min ([ADR 0010](docs/adr/0010-background-review-processing.md)).
 - **RAG sem serviço extra:** vetores no próprio PostgreSQL (pgvector + HNSW), documentos autocontidos em português, reindex atômico e checagem de dimensão antes de gastar cota ([ADR 0006](docs/adr/0006-rag-with-pgvector.md)).
 - **Fuso horário como regra de negócio:** "terça-feira" e "outubro" são do restaurante (São Paulo), não do UTC; todas as agregações e o texto para SQL convertem as datas.
 - **Seed determinístico e versionado** ([ADR 0003](docs/adr/0003-deterministic-seed-data.md)): os mesmos dados alimentam demo, testes e avaliação; padrões plantados dão ao agente algo real a descobrir; todo registro passa pelas regras do domínio.
@@ -342,7 +344,6 @@ As decisões completas estão nos [ADRs](docs/adr/).
 - Diagramas de arquitetura e de fluxo em Mermaid ([`docs/diagrams/`](docs/diagrams/)).
 - Autenticação (JWT) e suporte a vários restaurantes, com isolamento por tenant também no texto para SQL (row-level security).
 - Respostas em streaming (Server-Sent Events) no `/api/chat`.
-- Indexação incremental do RAG ao cadastrar avaliações.
 - Observabilidade com OpenTelemetry (traces por chamada ao LLM e por ferramenta).
 
 ## Licença

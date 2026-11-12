@@ -19,5 +19,5 @@ Perguntas como *"o que os clientes estão falando sobre a embalagem?"* não se r
 ## Consequências
 
 - Uma única infraestrutura para dados relacionais e vetoriais: backups, transações e joins juntos, e um container a menos.
-- Avaliações novas só entram na busca semântica após o próximo reindex (os insights e o texto para SQL as veem na hora). Indexação incremental é um próximo passo simples (`upsert` por `source_id`), deixado de fora para economizar cota.
+- Avaliações novas só entram na busca semântica após o próximo reindex (os insights e o texto para SQL as veem na hora). Indexação incremental é um próximo passo simples (`upsert` por `source_id`), deixado de fora para economizar cota. *(Resolvido pelo [ADR 0010](0010-background-review-processing.md): avaliações novas são indexadas automaticamente.)*
 - Para milhões de vetores, um banco vetorial dedicado ou particionamento passaria a valer a pena.
