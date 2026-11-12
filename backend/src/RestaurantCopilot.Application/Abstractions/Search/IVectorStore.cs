@@ -9,6 +9,9 @@ public interface IVectorStore
     /// <summary>Atomically replaces the whole index, so searches never see a half-built index.</summary>
     Task ReplaceAllAsync(IReadOnlyList<VectorDocument> documents, CancellationToken cancellationToken);
 
+    /// <summary>Adds the documents, replacing any already indexed for the same source item.</summary>
+    Task UpsertAsync(IReadOnlyList<VectorDocument> documents, CancellationToken cancellationToken);
+
     /// <summary>The <paramref name="limit"/> nearest documents by cosine similarity, most similar first.</summary>
     Task<IReadOnlyList<VectorSearchResult>> SearchAsync(
         float[] queryVector,

@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using RestaurantCopilot.Application.Abstractions.Background;
 using RestaurantCopilot.Application.Abstractions.Messaging;
 using RestaurantCopilot.Application.Abstractions.Persistence;
 using RestaurantCopilot.Application.Chat;
@@ -11,8 +12,9 @@ namespace RestaurantCopilot.Application.Reviews.CreateReview;
 
 /// <summary>
 /// Stores a review and classifies it right away. If the LLM is unavailable (e.g. free-tier
-/// rate limit), the review is still saved and stays pending until the next classification run:
-/// losing customer feedback because of an AI outage would be worse than a delayed insight.
+/// rate limit), the review is still saved and stays pending: losing customer feedback because of
+/// an AI outage would be worse than a delayed insight. The background review processing then
+/// classifies what is pending and adds the review to the semantic search index.
 /// </summary>
 internal sealed class CreateReviewCommandHandler(
     IOrderRepository orders,
@@ -21,6 +23,7 @@ internal sealed class CreateReviewCommandHandler(
     IReviewClassifier classifier,
     IUnitOfWork unitOfWork,
     IChatCache chatCache,
+    IReviewProcessingTrigger reviewProcessing,
     TimeProvider timeProvider,
     ILogger<CreateReviewCommandHandler> logger) : ICommandHandler<CreateReviewCommand, ReviewResponse>
 {
@@ -54,6 +57,7 @@ internal sealed class CreateReviewCommandHandler(
         reviews.Add(review.Value);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         await chatCache.InvalidateAsync(cancellationToken);
+        reviewProcessing.Notify();
 
         return ReviewResponse.FromEntity(review.Value, order.Number);
     }

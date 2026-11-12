@@ -16,6 +16,9 @@ public interface IReviewRepository
         ReviewSearchFilter filter,
         CancellationToken cancellationToken);
 
+    /// <summary>Oldest reviews that have no search document yet, for incremental indexing.</summary>
+    Task<IReadOnlyList<ReviewDocumentRow>> ListNotIndexedAsync(int limit, CancellationToken cancellationToken);
+
     /// <summary>Every review, with the reviewed dish name, for building the search index.</summary>
     Task<IReadOnlyList<ReviewDocumentRow>> ListForIndexingAsync(CancellationToken cancellationToken);
 
