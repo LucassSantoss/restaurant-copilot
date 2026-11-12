@@ -24,7 +24,7 @@ O RestaurantCopilot transforma essas perguntas em consultas aos dados reais e de
 
 | Funcionalidade | Descrição | Status |
 |---|---|---|
-| Análise de avaliações | Classifica sentimento e tema de cada avaliação com saída JSON estruturada do LLM | Planejado (Fase 4) |
+| Análise de avaliações | Classifica sentimento e temas de cada avaliação com saída JSON estruturada do LLM; resumo por período em `/api/reviews/insights` | ✅ Pronto |
 | RAG | Embeddings do cardápio e das avaliações no PostgreSQL com pgvector | Planejado (Fase 5) |
 | Agente com ferramentas | O LLM decide quando consultar vendas, avaliações ou fazer busca semântica | Planejado (Fase 6) |
 | Texto para SQL | Perguntas analíticas viram SQL **somente leitura** e validado | Planejado (Fase 7) |
@@ -142,6 +142,51 @@ GET /api/menu?category=Dessert
 Categorias: `Starter`, `Pizza`, `Pasta`, `Risotto`, `MainCourse`, `Dessert`, `Drink`. Uma categoria desconhecida retorna `400` com um corpo [Problem Details](https://www.rfc-editor.org/rfc/rfc9457).
 
 ```http
+POST /api/reviews
+Content-Type: application/json
+
+{ "orderNumber": 1001, "rating": 1, "comment": "A lasanha chegou toda vazada, molho espalhado na sacola." }
+```
+
+```json
+{
+  "id": "019a7c3e-5d1b-7a20-9b4e-2f1c8d6e4a10",
+  "orderNumber": 1001,
+  "menuItemId": null,
+  "rating": 1,
+  "comment": "A lasanha chegou toda vazada, molho espalhado na sacola.",
+  "createdAt": "2026-11-11T18:20:00+00:00",
+  "classification": { "sentiment": "Negative", "themes": ["Packaging"] }
+}
+```
+
+Se o Gemini estiver indisponível, a avaliação é salva com `"classification": null` e classificada depois por `POST /api/ingestion/classify-reviews` (que também classifica as avaliações do seed).
+
+```http
+GET /api/reviews/insights?from=2026-10-01&to=2026-10-31
+```
+
+```json
+{
+  "from": "2026-10-01",
+  "to": "2026-10-31",
+  "totalReviews": 71,
+  "classifiedReviews": 71,
+  "averageRating": 3.42,
+  "sentiment": { "positive": 33, "neutral": 9, "negative": 29 },
+  "themes": [
+    { "theme": "Taste", "mentions": 30, "negative": 7 },
+    { "theme": "Packaging", "mentions": 15, "negative": 13 }
+  ],
+  "mostComplainedDishes": [
+    { "menuItemId": "019a7c3e-...", "name": "Lasanha à Bolonhesa", "negativeReviews": 9 }
+  ]
+}
+```
+
+> Os números acima ilustram o formato; os valores reais dependem da classificação feita pelo modelo.
+
+```http
 GET /health
 ```
 
@@ -189,6 +234,8 @@ Planejado (Fase 9): um conjunto de perguntas com respostas esperadas sobre os da
 - **Erros de negócio como valores:** factories e casos de uso retornam `Result<T>`; a API traduz o tipo do erro em status HTTP (400/404/409) com Problem Details. Exceções ficam para o que é realmente excepcional.
 - **Seed determinístico e versionado** ([ADR 0003](docs/adr/0003-deterministic-seed-data.md)): os mesmos dados alimentam demo, testes e avaliação do agente, e todo registro passa pelas regras do domínio.
 - **Limites do plano gratuito do Gemini:** chamadas com retry exponencial e jitter (respeitando `Retry-After`), timeout por tentativa e total, e erros explícitos (`Llm.RateLimited`) quando as tentativas acabam. Os testes nunca chamam a API real.
+- **Classificação que não perde dados:** se o LLM falhar ao cadastrar uma avaliação, ela é salva como pendente e classificada depois, em lote ([ADR 0005](docs/adr/0005-review-classification.md)).
+- **Prompt injection em avaliações:** o texto do cliente vai como dado JSON e o classificador não tem ferramentas; no pior caso, uma avaliação é mal classificada.
 - **Enums gravados como texto** no banco (`'Delivery'` em vez de `0`): consultas, inclusive as geradas pelo LLM, ficam legíveis sem tabela de-para.
 
 As decisões completas estão nos [ADRs](docs/adr/).
@@ -198,7 +245,7 @@ As decisões completas estão nos [ADRs](docs/adr/).
 1. ~~Fundação: solution, Docker Compose, CI, health check~~ ✅
 2. ~~Domínio e dados: entidades, EF Core, migrations e seed fictício~~ ✅
 3. ~~Integração com o Gemini atrás de `ILlmClient`, com resiliência~~ ✅
-4. Análise de avaliações e endpoint de insights
+4. ~~Análise de avaliações e endpoint de insights~~ ✅
 5. RAG com pgvector
 6. Agente com function calling e `/api/chat`
 7. Texto para SQL com validação e usuário somente leitura
