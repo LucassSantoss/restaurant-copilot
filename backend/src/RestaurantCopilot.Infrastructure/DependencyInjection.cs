@@ -1,10 +1,12 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using RestaurantCopilot.Application.Abstractions.Caching;
 using RestaurantCopilot.Application.Abstractions.Persistence;
 using RestaurantCopilot.Application.Abstractions.Search;
 using RestaurantCopilot.Application.Abstractions.Sql;
 using RestaurantCopilot.Infrastructure.Ai.Gemini;
+using RestaurantCopilot.Infrastructure.Caching;
 using RestaurantCopilot.Infrastructure.Persistence;
 using RestaurantCopilot.Infrastructure.Persistence.Repositories;
 using RestaurantCopilot.Infrastructure.Persistence.Seeding;
@@ -23,6 +25,7 @@ public static class DependencyInjection
         services.AddPersistence(configuration, postgresConnectionString);
         services.AddGemini(configuration);
         services.AddTextToSql(configuration);
+        services.AddCaching(redisConnectionString);
 
         services.AddHealthChecks()
             .AddNpgSql(postgresConnectionString, name: "postgres")
@@ -45,6 +48,16 @@ public static class DependencyInjection
         services.AddScoped<IReviewRepository, ReviewRepository>();
         services.AddScoped<ISalesRepository, SalesRepository>();
         services.AddScoped<IVectorStore, PgvectorVectorStore>();
+    }
+
+    private static void AddCaching(this IServiceCollection services, string redisConnectionString)
+    {
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = redisConnectionString;
+            options.InstanceName = "restaurant-copilot:";
+        });
+        services.AddSingleton<ICacheService, RedisCacheService>();
     }
 
     private static void AddTextToSql(this IServiceCollection services, IConfiguration configuration)
