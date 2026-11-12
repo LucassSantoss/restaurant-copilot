@@ -7,6 +7,8 @@ public sealed class Review : Entity
 {
     public const int CommentMaxLength = 2000;
 
+    private readonly List<ReviewTheme> _themes = [];
+
     private Review(Guid id, Guid orderId, Guid? menuItemId, Rating rating, string comment, DateTimeOffset createdAt)
         : base(id)
     {
@@ -27,6 +29,15 @@ public sealed class Review : Entity
 
     /// <summary>When the review was written, always stored in UTC.</summary>
     public DateTimeOffset CreatedAt { get; private set; }
+
+    /// <summary>Sentiment assigned by the AI classification; null until the review is classified.</summary>
+    public ReviewSentiment? Sentiment { get; private set; }
+
+    public IReadOnlyList<ReviewTheme> Themes => _themes;
+
+    public DateTimeOffset? ClassifiedAt { get; private set; }
+
+    public bool IsClassified => ClassifiedAt is not null;
 
     public static Result<Review> Create(
         Guid orderId,
@@ -51,5 +62,21 @@ public sealed class Review : Entity
         }
 
         return new Review(Guid.CreateVersion7(), orderId, menuItemId, rating, comment.Trim(), createdAt.ToUniversalTime());
+    }
+
+    /// <summary>Records the AI classification. Re-classifying replaces the previous result.</summary>
+    public Result Classify(ReviewSentiment sentiment, IEnumerable<ReviewTheme> themes, DateTimeOffset classifiedAt)
+    {
+        var distinctThemes = themes.Distinct().ToList();
+        if (!Enum.IsDefined(sentiment) || !distinctThemes.All(Enum.IsDefined))
+        {
+            return Result.Failure(Error.Validation("Review.Classification", "Unknown sentiment or theme."));
+        }
+
+        Sentiment = sentiment;
+        _themes.Clear();
+        _themes.AddRange(distinctThemes.Order());
+        ClassifiedAt = classifiedAt.ToUniversalTime();
+        return Result.Success();
     }
 }

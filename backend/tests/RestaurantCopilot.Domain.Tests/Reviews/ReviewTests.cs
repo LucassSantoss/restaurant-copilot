@@ -42,4 +42,43 @@ public sealed class ReviewTests
     {
         Review.Create(Guid.NewGuid(), null, FiveStars, " ", CreatedAt).Error.Code.ShouldBe("Review.Comment.Required");
     }
+
+    [Fact]
+    public void Classify_StoresSentimentAndDistinctOrderedThemes()
+    {
+        var review = Review.Create(Guid.NewGuid(), null, FiveStars, "Atrasou e veio vazando", CreatedAt).Value;
+
+        var result = review.Classify(
+            ReviewSentiment.Negative,
+            [ReviewTheme.Packaging, ReviewTheme.Delay, ReviewTheme.Packaging],
+            CreatedAt.AddHours(1));
+
+        result.IsSuccess.ShouldBeTrue();
+        review.IsClassified.ShouldBeTrue();
+        review.Sentiment.ShouldBe(ReviewSentiment.Negative);
+        review.Themes.ShouldBe([ReviewTheme.Delay, ReviewTheme.Packaging]);
+    }
+
+    [Fact]
+    public void Classify_Again_ReplacesPreviousClassification()
+    {
+        var review = Review.Create(Guid.NewGuid(), null, FiveStars, "Ótimo", CreatedAt).Value;
+        review.Classify(ReviewSentiment.Negative, [ReviewTheme.Price], CreatedAt);
+
+        review.Classify(ReviewSentiment.Positive, [], CreatedAt);
+
+        review.Sentiment.ShouldBe(ReviewSentiment.Positive);
+        review.Themes.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Classify_WithUndefinedTheme_FailsAndKeepsReviewUnclassified()
+    {
+        var review = Review.Create(Guid.NewGuid(), null, FiveStars, "Ótimo", CreatedAt).Value;
+
+        var result = review.Classify(ReviewSentiment.Positive, [(ReviewTheme)42], CreatedAt);
+
+        result.Error.Code.ShouldBe("Review.Classification");
+        review.IsClassified.ShouldBeFalse();
+    }
 }

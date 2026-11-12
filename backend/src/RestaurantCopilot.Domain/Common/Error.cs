@@ -1,7 +1,7 @@
 namespace RestaurantCopilot.Domain.Common;
 
 /// <summary>A business error: a stable machine-readable code plus a human-readable message.</summary>
-public sealed record Error(string Code, string Message, ErrorType Type)
+public record Error(string Code, string Message, ErrorType Type)
 {
     public static readonly Error None = new(string.Empty, string.Empty, ErrorType.Failure);
 
