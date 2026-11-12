@@ -26,7 +26,7 @@ O RestaurantCopilot transforma essas perguntas em consultas aos dados reais e de
 |---|---|---|
 | Análise de avaliações | Classifica sentimento e temas de cada avaliação com saída JSON estruturada do LLM; resumo por período em `/api/reviews/insights` | ✅ Pronto |
 | RAG | Embeddings do cardápio e das avaliações no PostgreSQL com pgvector (índice HNSW) e busca semântica em `/api/search` | ✅ Pronto |
-| Agente com ferramentas | O LLM decide quando consultar vendas, avaliações ou fazer busca semântica | Planejado (Fase 6) |
+| Agente com ferramentas | `POST /api/chat`: o LLM decide quando consultar vendas, avaliações, busca semântica ou relatórios, e responde citando as fontes | ✅ Pronto |
 | Texto para SQL | Perguntas analíticas viram SQL **somente leitura** e validado | Planejado (Fase 7) |
 | Cache de respostas | Redis para reduzir latência e consumo da cota gratuita | Planejado (Fase 8) |
 | Cardápio | `GET /api/menu` com filtros por categoria e disponibilidade | ✅ Pronto |
@@ -121,6 +121,30 @@ dotnet run --project backend/src/RestaurantCopilot.Api
 - OpenAPI: http://localhost:5080/openapi/v1.json
 
 ## Exemplos de requisições
+
+```http
+POST /api/chat
+Content-Type: application/json
+
+{ "question": "Qual foi meu faturamento na última semana comparado à anterior?" }
+```
+
+```json
+{
+  "answer": "Na última semana (02/11 a 08/11/2026) você faturou R$ 7.712,10 em 127 pedidos, contra R$ 6.640,80 na semana anterior (26/10 a 01/11): alta de 16,1%. ...",
+  "sources": [
+    { "kind": "tool", "reference": "search_sales", "description": "Vendas de 02/11/2026 a 08/11/2026" },
+    { "kind": "tool", "reference": "search_sales", "description": "Vendas de 26/10/2026 a 01/11/2026" }
+  ],
+  "toolCalls": [
+    { "tool": "search_sales", "arguments": { "period_start": "2026-11-02", "period_end": "2026-11-08" }, "succeeded": true, "error": null },
+    { "tool": "search_sales", "arguments": { "period_start": "2026-10-26", "period_end": "2026-11-01" }, "succeeded": true, "error": null }
+  ],
+  "usage": { "inputTokens": 4210, "outputTokens": 180 }
+}
+```
+
+> Exemplo ilustrativo do formato; o texto e os números exatos dependem do modelo e dos dados.
 
 ```http
 GET /api/menu?category=Dessert
@@ -260,6 +284,8 @@ Planejado (Fase 9): um conjunto de perguntas com respostas esperadas sobre os da
 - **Classificação que não perde dados:** se o LLM falhar ao cadastrar uma avaliação, ela é salva como pendente e classificada depois, em lote ([ADR 0005](docs/adr/0005-review-classification.md)).
 - **Prompt injection em avaliações:** o texto do cliente vai como dado JSON e o classificador não tem ferramentas; no pior caso, uma avaliação é mal classificada.
 - **RAG sem serviço extra:** vetores no próprio PostgreSQL (pgvector + HNSW), reindex atômico e checagem de dimensão antes de gastar cota ([ADR 0006](docs/adr/0006-rag-with-pgvector.md)).
+- **Agente limitado e tolerante a erros:** no máximo 6 turnos com ferramentas (depois, uma resposta forçada sem ferramentas), timeout total, e erros de ferramenta devolvidos ao modelo para que ele se corrija ([ADR 0007](docs/adr/0007-agent-function-calling.md)).
+- **Números vêm de ferramentas, não do modelo:** o prompt proíbe inventar dados, e cada resposta traz as ferramentas e documentos usados.
 - **Enums gravados como texto** no banco (`'Delivery'` em vez de `0`): consultas, inclusive as geradas pelo LLM, ficam legíveis sem tabela de-para.
 
 As decisões completas estão nos [ADRs](docs/adr/).
@@ -271,7 +297,7 @@ As decisões completas estão nos [ADRs](docs/adr/).
 3. ~~Integração com o Gemini atrás de `ILlmClient`, com resiliência~~ ✅
 4. ~~Análise de avaliações e endpoint de insights~~ ✅
 5. ~~RAG com pgvector~~ ✅
-6. Agente com function calling e `/api/chat`
+6. ~~Agente com function calling e `/api/chat`~~ ✅
 7. Texto para SQL com validação e usuário somente leitura
 8. Cache com Redis
 9. Avaliação do agente
