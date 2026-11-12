@@ -12,7 +12,7 @@ O projeto precisa de dados realistas (cardápio, pedidos, avaliações) para a d
 - Um gerador em [`seed/generate.cs`](../../seed/generate.cs) (um *file-based app* do .NET 10: `dotnet run seed/generate.cs`) produz os arquivos JSON em `seed/`. Ele usa uma semente fixa, então rodar de novo gera exatamente os mesmos dados.
 - Os JSON gerados são **versionados**. A API, os testes e a avaliação leem os mesmos arquivos.
 - O período é fixo (03/08/2026 a 08/11/2026, 14 semanas completas), com datas absolutas no fuso `America/Sao_Paulo`.
-- O gerador planta padrões de negócio de propósito, para que o agente tenha algo real a descobrir: terça-feira é o dia mais fraco; entregas de sexta e sábado à noite recebem reclamações de atraso; em outubro a lasanha tem problema de embalagem; o risoto de camarão recebe reclamações de preço; a última semana vende mais que as anteriores.
+- O gerador planta padrões de negócio de propósito, para que o agente tenha algo real a descobrir: terça-feira é o dia mais fraco; entregas de sexta e sábado à noite recebem reclamações de atraso; em outubro a lasanha tem um problema de embalagem (molho vazando) que gera uma onda de avaliações negativas; o risoto de camarão recebe reclamações de preço; a última semana vende mais que as anteriores.
 - O `DatabaseSeeder` cria cada registro pelas factories do domínio, então os dados do seed obedecem às mesmas invariantes dos dados criados pela API. O seed só roda em banco vazio.
 
 ## Consequências

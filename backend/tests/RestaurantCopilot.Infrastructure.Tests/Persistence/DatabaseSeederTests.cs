@@ -16,8 +16,8 @@ public sealed class DatabaseSeederTests(PostgresFixture fixture)
 
         (await dbContext.Restaurants.CountAsync(cancellationToken)).ShouldBe(1);
         (await dbContext.MenuItems.CountAsync(cancellationToken)).ShouldBe(24);
-        (await dbContext.Orders.CountAsync(cancellationToken)).ShouldBe(1457);
-        (await dbContext.Reviews.CountAsync(cancellationToken)).ShouldBe(215);
+        (await dbContext.Orders.CountAsync(cancellationToken)).ShouldBe(1489);
+        (await dbContext.Reviews.CountAsync(cancellationToken)).ShouldBe(242);
         (await dbContext.Orders.CountAsync(order => order.Status == OrderStatus.Cancelled, cancellationToken)).ShouldBeGreaterThan(0);
     }
 

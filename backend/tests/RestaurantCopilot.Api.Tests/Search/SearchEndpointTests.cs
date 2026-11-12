@@ -25,7 +25,7 @@ public sealed class SearchEndpointTests(ApiFactory factory)
         reindex.StatusCode.ShouldBe(HttpStatusCode.OK);
         counts.ShouldNotBeNull();
         counts.MenuItems.ShouldBe(24);
-        counts.Reviews.ShouldBeGreaterThanOrEqualTo(215);
+        counts.Reviews.ShouldBeGreaterThanOrEqualTo(242);
         results.ShouldNotBeNull();
         results.Count.ShouldBe(3);
         results.ShouldAllBe(result => result.Source == "Review"

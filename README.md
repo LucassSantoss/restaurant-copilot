@@ -132,7 +132,7 @@ Content-Type: application/json
 
 ```json
 {
-  "answer": "Na última semana (02/11 a 08/11/2026) você faturou R$ 13.891,90 em 122 pedidos, contra R$ 11.971,00 em 100 pedidos na semana anterior (26/10 a 01/11): alta de 16,0%. ...",
+  "answer": "Na última semana (02/11 a 08/11/2026) você faturou R$ 13.143,60 em 123 pedidos, contra R$ 12.889,90 em 105 pedidos na semana anterior (26/10 a 01/11): alta de 2,0%. ...",
   "sources": [
     { "kind": "tool", "reference": "search_sales", "description": "Vendas de 02/11/2026 a 08/11/2026" },
     { "kind": "tool", "reference": "search_sales", "description": "Vendas de 26/10/2026 a 01/11/2026" }
@@ -196,16 +196,16 @@ GET /api/reviews/insights?from=2026-10-01&to=2026-10-31
 {
   "from": "2026-10-01",
   "to": "2026-10-31",
-  "totalReviews": 65,
-  "classifiedReviews": 65,
-  "averageRating": 3.62,
-  "sentiment": { "positive": 34, "neutral": 8, "negative": 23 },
+  "totalReviews": 90,
+  "classifiedReviews": 90,
+  "averageRating": 3.22,
+  "sentiment": { "positive": 40, "neutral": 9, "negative": 41 },
   "themes": [
-    { "theme": "Taste", "mentions": 30, "negative": 7 },
-    { "theme": "Packaging", "mentions": 15, "negative": 13 }
+    { "theme": "Packaging", "mentions": 31, "negative": 29 },
+    { "theme": "Taste", "mentions": 30, "negative": 6 }
   ],
   "mostComplainedDishes": [
-    { "menuItemId": "019a7c3e-...", "name": "Lasanha à Bolonhesa", "negativeReviews": 9 }
+    { "menuItemId": "019a7c3e-...", "name": "Lasanha à Bolonhesa", "negativeReviews": 19 }
   ]
 }
 ```
@@ -217,7 +217,7 @@ POST /api/ingestion/reindex
 ```
 
 ```json
-{ "menuItems": 24, "reviews": 215 }
+{ "menuItems": 24, "reviews": 242 }
 ```
 
 ```http

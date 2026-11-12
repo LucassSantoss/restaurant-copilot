@@ -140,24 +140,27 @@ List<OrderItemEntry> PickItems()
 
 ReviewEntry? TryCreateReview(OrderEntry order)
 {
-    var reviewChance = order.Channel == "Delivery" ? 0.17 : 0.07;
+    var local = order.PlacedAt;
+    var isWeekendDinnerDelivery = order.Channel == "Delivery"
+        && local.DayOfWeek is DayOfWeek.Friday or DayOfWeek.Saturday
+        && local.Hour >= 20;
+    var hasShrimpRisotto = order.Items.Any(i => i.MenuItem == "risoto-camarao");
+    var hasLeakingLasagna = order.Items.Any(i => i.MenuItem == "lasanha-bolonhesa")
+        && local.Month == 10
+        && order.Channel == "Delivery";
+
+    // Unhappy customers review more often than satisfied ones.
+    var reviewChance = hasLeakingLasagna ? 0.6 : order.Channel == "Delivery" ? 0.17 : 0.07;
     if (random.NextDouble() >= reviewChance)
     {
         return null;
     }
 
-    var local = order.PlacedAt;
-    var isWeekendDinnerDelivery = order.Channel == "Delivery"
-        && local.DayOfWeek is DayOfWeek.Friday or DayOfWeek.Saturday
-        && local.Hour >= 20;
-    var hasLasagna = order.Items.Any(i => i.MenuItem == "lasanha-bolonhesa");
-    var hasShrimpRisotto = order.Items.Any(i => i.MenuItem == "risoto-camarao");
-
     string theme;
     string sentiment;
     string? dishKey = null;
 
-    if (hasLasagna && local.Month == 10 && order.Channel == "Delivery" && random.NextDouble() < 0.65)
+    if (hasLeakingLasagna && random.NextDouble() < 0.8)
     {
         (theme, sentiment, dishKey) = ("Packaging", "Negative", "lasanha-bolonhesa");
     }
@@ -179,7 +182,11 @@ ReviewEntry? TryCreateReview(OrderEntry order)
 
     dishKey ??= order.Items.Select(i => i.MenuItem).Where(k => mains.Any(m => m.Key == k)).FirstOrDefault();
     var dish = menu.First(m => m.Key == dishKey);
-    var template = PickFrom(Templates[(sentiment, theme)]);
+    // Planted issues always name the dish, so they can be traced back to it.
+    var templates = Templates[(sentiment, theme)];
+    var template = PickFrom(hasLeakingLasagna && dishKey == "lasanha-bolonhesa" && theme == "Packaging" && sentiment == "Negative"
+        ? templates.Where(t => t.Contains("{dish}", StringComparison.Ordinal)).ToArray()
+        : templates);
     var mentionsDish = template.Contains("{dish}", StringComparison.Ordinal);
     var comment = template
         .Replace("{dish}", dish.Name, StringComparison.Ordinal)

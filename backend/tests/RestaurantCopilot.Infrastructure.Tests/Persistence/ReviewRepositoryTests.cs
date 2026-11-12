@@ -20,7 +20,7 @@ public sealed class ReviewRepositoryTests(PostgresFixture fixture)
 
         var rows = await repository.ListForInsightsAsync(SeedStart, SeedEnd, TestContext.Current.CancellationToken);
 
-        rows.Count.ShouldBe(215);
+        rows.Count.ShouldBe(242);
         rows.ShouldContain(row => row.MenuItemName == "Lasanha à Bolonhesa");
         rows.Where(row => row.MenuItemId is null).ShouldAllBe(row => row.MenuItemName == null);
     }
@@ -53,7 +53,7 @@ public sealed class ReviewRepositoryTests(PostgresFixture fixture)
         var reloaded = await dbContext.Reviews.SingleAsync(review => review.Id == pending[0].Id, cancellationToken);
         reloaded.Sentiment.ShouldBe(ReviewSentiment.Negative);
         reloaded.Themes.ShouldBe([ReviewTheme.Delay, ReviewTheme.Packaging]);
-        (await repository.CountUnclassifiedAsync(cancellationToken)).ShouldBe(214);
+        (await repository.CountUnclassifiedAsync(cancellationToken)).ShouldBe(241);
         var themesInSql = await dbContext.Database
             .SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM reviews WHERE 'Packaging' = ANY(themes)")
             .SingleAsync(cancellationToken);
