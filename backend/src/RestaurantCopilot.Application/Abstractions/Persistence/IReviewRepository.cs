@@ -11,6 +11,9 @@ public interface IReviewRepository
 
     Task<int> CountUnclassifiedAsync(CancellationToken cancellationToken);
 
+    /// <summary>Every review, with the reviewed dish name, for building the search index.</summary>
+    Task<IReadOnlyList<ReviewDocumentRow>> ListForIndexingAsync(CancellationToken cancellationToken);
+
     /// <summary>Lightweight projection of the reviews created in [startUtc, endUtc).</summary>
     Task<IReadOnlyList<ReviewInsightRow>> ListForInsightsAsync(
         DateTimeOffset startUtc,
@@ -24,3 +27,5 @@ public sealed record ReviewInsightRow(
     IReadOnlyList<ReviewTheme> Themes,
     Guid? MenuItemId,
     string? MenuItemName);
+
+public sealed record ReviewDocumentRow(Guid Id, int Rating, string Comment, DateTimeOffset CreatedAt, string? MenuItemName);
