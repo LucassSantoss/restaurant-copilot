@@ -7,7 +7,7 @@ using RestaurantCopilot.Application.Abstractions.Ai;
 
 namespace RestaurantCopilot.Infrastructure.Ai.Gemini;
 
-internal static class GeminiServiceCollectionExtensions
+public static class GeminiServiceCollectionExtensions
 {
     public static IServiceCollection AddGemini(this IServiceCollection services, IConfiguration configuration)
     {

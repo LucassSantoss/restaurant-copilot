@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\tools\RestaurantCopilot.Evaluation\RestaurantCopilot.Evaluation.csproj" />
+  </ItemGroup>
+
+</Project>

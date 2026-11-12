@@ -9,6 +9,10 @@
     <Project Path="tests/RestaurantCopilot.Api.Tests/RestaurantCopilot.Api.Tests.csproj" />
     <Project Path="tests/RestaurantCopilot.Application.Tests/RestaurantCopilot.Application.Tests.csproj" />
     <Project Path="tests/RestaurantCopilot.Domain.Tests/RestaurantCopilot.Domain.Tests.csproj" />
+    <Project Path="tests/RestaurantCopilot.Evaluation.Tests/RestaurantCopilot.Evaluation.Tests.csproj" />
     <Project Path="tests/RestaurantCopilot.Infrastructure.Tests/RestaurantCopilot.Infrastructure.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/RestaurantCopilot.Evaluation/RestaurantCopilot.Evaluation.csproj" />
   </Folder>
 </Solution>
