@@ -1,5 +1,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RestaurantCopilot.Application.Abstractions.Persistence;
+using RestaurantCopilot.Infrastructure.Persistence;
+using RestaurantCopilot.Infrastructure.Persistence.Repositories;
+using RestaurantCopilot.Infrastructure.Persistence.Seeding;
 
 namespace RestaurantCopilot.Infrastructure;
 
@@ -10,11 +14,22 @@ public static class DependencyInjection
         var postgresConnectionString = configuration.GetRequiredConnectionString(ConnectionStringNames.Postgres);
         var redisConnectionString = configuration.GetRequiredConnectionString(ConnectionStringNames.Redis);
 
+        services.AddPersistence(configuration, postgresConnectionString);
+
         services.AddHealthChecks()
             .AddNpgSql(postgresConnectionString, name: "postgres")
             .AddRedis(redisConnectionString, name: "redis");
 
         return services;
+    }
+
+    private static void AddPersistence(this IServiceCollection services, IConfiguration configuration, string connectionString)
+    {
+        services.Configure<DatabaseOptions>(configuration.GetSection(DatabaseOptions.SectionName));
+        services.AddDbContext<ApplicationDbContext>(options => PersistenceConfiguration.Configure(options, connectionString));
+        services.AddScoped<DatabaseSeeder>();
+
+        services.AddScoped<IMenuItemRepository, MenuItemRepository>();
     }
 
     private static string GetRequiredConnectionString(this IConfiguration configuration, string name) =>

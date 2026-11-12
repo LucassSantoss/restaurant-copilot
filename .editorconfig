@@ -69,6 +69,7 @@ dotnet_naming_style.async_suffix.required_suffix = Async
 
 # Analyzer tuning
 dotnet_diagnostic.CA1848.severity = none   # LoggerMessage delegates: verbosity not worth it here
+dotnet_diagnostic.CA1873.severity = none   # Same trade-off as CA1848 for cheap log arguments
 dotnet_diagnostic.CA2007.severity = none   # ConfigureAwait: no SynchronizationContext in ASP.NET Core
 dotnet_diagnostic.CA1716.severity = none   # Keyword clash with other .NET languages (e.g. VB "Error"): C#-only codebase
 
@@ -76,3 +77,8 @@ dotnet_diagnostic.CA1716.severity = none   # Keyword clash with other .NET langu
 # Test method names use underscores (Method_Scenario_Expected)
 dotnet_diagnostic.CA1707.severity = none
 dotnet_naming_rule.async_methods_suffix.severity = none
+
+[backend/src/**/Migrations/*.cs]
+# EF Core migrations are generated code
+generated_code = true
+dotnet_analyzer_diagnostic.severity = none
