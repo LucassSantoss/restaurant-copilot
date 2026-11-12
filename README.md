@@ -265,7 +265,7 @@ GET /api/menu?category=Dessert
   "checks": {
     "postgres": { "status": "Healthy", "description": null, "durationMs": 69.9 },
     "redis": { "status": "Healthy", "description": null, "durationMs": 49.1 },
-    "gemini": { "status": "Healthy", "description": "Model gemini-2.5-flash is reachable.", "durationMs": 180.2 }
+    "gemini": { "status": "Healthy", "description": "Model gemini-3.5-flash is reachable.", "durationMs": 180.2 }
   }
 }
 ```
